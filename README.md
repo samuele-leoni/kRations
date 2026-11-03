@@ -1,5 +1,5 @@
 # Samuele Giovanni Leoni
-## Quote
+### Quote
 "Considerate la vostra semenza:\
 fatti non foste a viver come bruti,\
 ma per seguir virtute e canoscenza"\
