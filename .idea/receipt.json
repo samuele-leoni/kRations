@@ -1,0 +1,33 @@
+{
+    "spec": {
+        "template_id": "kmt",
+        "parameters": {
+            "utm_source": "other",
+            "utm_medium": "other",
+            "utm_campaign": "other"
+        },
+        "targets": {
+            "android": {
+                "ui": [
+                    "compose"
+                ]
+            },
+            "ios": {
+                "ui": [
+                    "compose"
+                ]
+            },
+            "web": {
+                "ui": [
+                    "compose"
+                ]
+            }
+        },
+        "include_tests": true,
+        "android_project_spec": {
+            "min_android_sdk": 24
+        },
+        "build_system": "gradle"
+    },
+    "timestamp": "2026-11-03T20:07:19.243141104Z"
+}
