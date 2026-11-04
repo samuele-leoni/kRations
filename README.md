@@ -3,7 +3,7 @@
 "Considerate la vostra semenza:\
 fatti non foste a viver come bruti,\
 ma per seguir virtute e canoscenza"\
-Dante, Inferno Canto XVI vv.118-120
+Dante, Inferno Canto XXVI vv.118-120
 
 ---
 
