@@ -75,5 +75,8 @@ gen/
 .gradle/
 build/
 
+# Kotlin Multiplatform compiler cache
+.kotlin/
+
 # Local configuration file
 local.properties
