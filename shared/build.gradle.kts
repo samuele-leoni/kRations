@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.ksp)                 // ← crea le configurazioni kspAndroid, kspIos…
     alias(libs.plugins.androidx.room3)      // ← plugin di Room 3 (schemi)
+    alias(libs.plugins.kotlinSerialization) //
 }
 
 kotlin {
@@ -52,6 +53,7 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
             implementation(libs.koin.android)
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -70,6 +72,11 @@ kotlin {
             // DI
             implementation(libs.koin.core)                     // ←
             implementation(libs.koin.compose.viewmodel)        // ← koinViewModel()
+
+            // Supabase
+            implementation(libs.supabase.auth)
+            implementation(libs.supabase.postgrest)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -80,6 +87,11 @@ kotlin {
         getByName("androidDeviceTest").dependencies {
             implementation(libs.androidx.testRunner)
         }
+
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+
     }
 }
 
