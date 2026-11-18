@@ -9,8 +9,15 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProductDao {
-    @Query("SELECT * FROM ProductEntity WHERE deletedAt IS NULL")
-    fun getProducts(): Flow<List<ProductEntity>>
+    @Query(
+        "SELECT * FROM ProductEntity " +
+            "WHERE deletedAt IS NULL " +
+            "AND (:categoryId IS NULL OR categoryId = :categoryId) " +
+            "AND (:query = '' OR name LIKE '%' || :query || '%' " +
+            "OR description LIKE '%' || :query || '%') " +
+            "ORDER BY name COLLATE NOCASE ASC",
+    )
+    fun searchProducts(query: String, categoryId: String?): Flow<List<ProductEntity>>
 
     @Query("SELECT * FROM ProductEntity WHERE id = :id AND deletedAt IS NULL")
     suspend fun getProductById(id: String): ProductEntity?
