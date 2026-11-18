@@ -26,6 +26,7 @@ data class ProductEntity(
     val description: String?,
     val iconName: String?,
     val unit: String = "unit",
+    val quantity: Double = 0.0,
     val minQuantity: Double = 0.0,
     val expiryAlertDays: Int = 7,
     val createdAt: String,

@@ -10,6 +10,7 @@ data class CategoryEntity(
     // TODO add foreign key ref
     val ownerUserId: String,
     val name: String,
+    val iconName: String?,
     val createdAt: String,
     val updatedAt: String,
     val deletedAt: String?,
