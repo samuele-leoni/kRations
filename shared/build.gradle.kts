@@ -68,8 +68,11 @@ kotlin {
             implementation(libs.androidx.sqlite.bundled)
 
             // DI
-            implementation(libs.koin.core)                     // ←
-            implementation(libs.koin.compose.viewmodel)        // ← koinViewModel()
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose.viewmodel)
+
+            // UI
+            implementation(libs.icons.material.icons.rounded.cmp)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -5,9 +5,9 @@ import androidx.room3.Database
 import androidx.room3.RoomDatabase
 import androidx.room3.RoomDatabaseConstructor
 import com.example.krations.shoppinglist.data.local.dao.ShoppingListItemDao
-import com.example.krations.shoppinglist.data.local.entity.ShoppingListItem
+import com.example.krations.shoppinglist.data.local.entity.ShoppingListItemEntity
 
-@Database(entities = [ShoppingListItem::class], version = 1)
+@Database(entities = [ShoppingListItemEntity::class], version = 1)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun shoppingListItemDao(): ShoppingListItemDao
