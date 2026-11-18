@@ -26,4 +26,10 @@ interface ShoppingListItemDao {
 
     @Query("UPDATE ShoppingListItem SET deletedAt = :timestamp, updatedAt = :timestamp WHERE isPurchased = 1 AND deletedAt IS NULL")
     suspend fun deletePurchasedItems(timestamp: String)
+
+    @Query("UPDATE ShoppingListItem SET isPurchased = 1, purchasedAt = :timestamp, updatedAt = :timestamp WHERE id = :id AND deletedAt IS NULL")
+    suspend fun setPurchased(id: String, timestamp: String)
+
+    @Query("UPDATE ShoppingListItem SET isPurchased = 1, purchasedAt = :timestamp, updatedAt = :timestamp WHERE deletedAt IS NULL")
+    suspend fun setPurchasedAll(timestamp: String)
 }

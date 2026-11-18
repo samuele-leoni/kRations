@@ -82,4 +82,14 @@ class ShoppingListViewModel(
     fun deletePurchasedItems() {
         viewModelScope.launch { repository.deletePurchasedItems() }
     }
+
+    fun setItemPurchased(id: String) {
+        // TODO increment item quantity in inventory
+        viewModelScope.launch { repository.setItemPurchased(id) }
+    }
+
+    fun setAllItemsPurchased() {
+        // TODO increment items quantity in inventory
+        viewModelScope.launch { repository.setAllItemsPurchased() }
+    }
 }

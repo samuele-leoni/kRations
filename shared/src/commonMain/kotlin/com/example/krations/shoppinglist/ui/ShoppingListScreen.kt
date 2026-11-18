@@ -29,13 +29,9 @@ fun ShoppingListScreen(
         onDelete = viewModel::deleteItem,
         onAddClick = { editingItem = null; showSheet = true },
         onItemClick = { editingItem = it; showSheet = true },
-        onItemBought = { itemId ->
-            /* TODO #10 Update the item as bought */
-        },
+        onItemBought = viewModel::setItemPurchased,
         onDeleteAllPurchased = viewModel::deletePurchasedItems,
-        onPurchaseAll = {
-            /* TODO #10 Update all items as bought */
-        },
+        onPurchaseAll = viewModel::setAllItemsPurchased,
     )
     if (showSheet) {
         ShoppingListItemDetail(

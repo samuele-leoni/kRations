@@ -64,4 +64,15 @@ class ShoppingListRepositoryImpl(private val dao: ShoppingListItemDao) : Shoppin
 
     override suspend fun deletePurchasedItems() =
         dao.deletePurchasedItems(now().toString())
+
+    override suspend fun setItemPurchased(id: String) =
+        dao.setPurchased(
+            id = id,
+            timestamp = now().toString(),
+        )
+
+    override suspend fun setAllItemsPurchased() =
+        dao.setPurchasedAll(
+            timestamp = now().toString(),
+        )
 }

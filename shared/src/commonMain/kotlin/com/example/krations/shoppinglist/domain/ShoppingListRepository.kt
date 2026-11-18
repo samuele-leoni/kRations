@@ -10,4 +10,6 @@ interface ShoppingListRepository {
     suspend fun updateItem(item: ShoppingListItem)
     suspend fun deleteItem(id: String)
     suspend fun deletePurchasedItems()
+    suspend fun setItemPurchased(id: String)
+    suspend fun setAllItemsPurchased()
 }
