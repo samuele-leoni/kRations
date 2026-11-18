@@ -16,6 +16,7 @@ val dataModule = module {
             .build()
     }
     single { get<AppDatabase>().shoppingListItemDao() }
+    single { get<AppDatabase>().productDao() }
 }
 
 val viewModelModule = module {
