@@ -1,0 +1,139 @@
+
+Project kRations {
+  database_type: 'PostgreSQL'
+  Note: 'kRations - Core Database Schema V2'
+}
+
+// ==========================================
+// CATEGORIES
+// ==========================================
+
+Table categories {
+  id varchar [pk, not null]
+  owner_user_id varchar [not null]
+  name varchar [not null]
+  icon_name varchar [not null, default: 'package']
+
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+  deleted_at timestamp
+
+  indexes {
+    (id, owner_user_id) [unique]
+    (owner_user_id, name)
+  }
+
+  checks {
+    `length(trim(name)) > 0` [name: 'chk_categories_name']
+    `length(trim(icon_name)) > 0` [name: 'chk_categories_icon']
+  }
+}
+
+// ==========================================
+// PRODUCTS
+// ==========================================
+
+Table products {
+  id varchar [pk, not null]
+  owner_user_id varchar [not null]
+  category_id varchar
+
+  name varchar [not null]
+  description text
+  icon_name varchar
+
+  unit varchar [not null, default: 'unit']
+  min_quantity decimal [not null, default: 0]
+  expiry_alert_days int [not null, default: 7]
+
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+  deleted_at timestamp
+
+  indexes {
+    (id, owner_user_id) [unique]
+    (owner_user_id, name)
+    (category_id, owner_user_id)
+  }
+
+  checks {
+    `length(trim(name)) > 0` [name: 'chk_products_name']
+    `length(trim(unit)) > 0` [name: 'chk_products_unit']
+    `icon_name IS NULL OR length(trim(icon_name)) > 0` [name: 'chk_products_icon']
+    `min_quantity >= 0` [name: 'chk_products_min_quantity']
+    `expiry_alert_days >= 0` [name: 'chk_products_expiry_alert_days']
+  }
+}
+
+// ==========================================
+// INVENTORY BATCHES
+// ==========================================
+
+Table inventory_batches {
+  id varchar [pk, not null]
+  owner_user_id varchar [not null]
+  product_id varchar [not null]
+
+  quantity decimal [not null]
+  expiration_date date
+
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+  deleted_at timestamp
+
+  indexes {
+    (product_id, owner_user_id, expiration_date)
+    (owner_user_id, expiration_date)
+  }
+
+  checks {
+    `quantity >= 0` [name: 'chk_batches_quantity']
+  }
+}
+
+// ==========================================
+// SHOPPING LIST ITEMS
+// ==========================================
+
+Table shopping_list_items {
+  id varchar [pk, not null]
+  owner_user_id varchar [not null]
+  product_id varchar
+
+  name varchar [not null]
+  quantity_needed decimal [not null, default: 1]
+  unit varchar [not null, default: 'unit']
+
+  is_purchased boolean [not null, default: false]
+  purchased_quantity decimal [not null, default: 0]
+  purchased_at timestamp
+
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+  deleted_at timestamp
+
+  indexes {
+    (owner_user_id, is_purchased)
+    (product_id, owner_user_id)
+  }
+
+  checks {
+    `length(trim(name)) > 0` [name: 'chk_shopping_name']
+    `length(trim(unit)) > 0` [name: 'chk_shopping_unit']
+    `quantity_needed > 0` [name: 'chk_shopping_quantity_needed']
+    `purchased_quantity >= 0` [name: 'chk_shopping_purchased_quantity']
+  }
+}
+
+// ==========================================
+// RELATIONSHIPS
+// ==========================================
+
+// Products -> Categories
+Ref: products.(category_id, owner_user_id) > categories.(id, owner_user_id) [delete: restrict]
+
+// Inventory Batches -> Products
+Ref: inventory_batches.(product_id, owner_user_id) > products.(id, owner_user_id) [delete: restrict]
+
+// Shopping List Items -> Products
+Ref: shopping_list_items.(product_id, owner_user_id) > products.(id, owner_user_id) [delete: restrict]
