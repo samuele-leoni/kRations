@@ -9,11 +9,15 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CategoryDao {
-    @Query("SELECT * FROM CategoryEntity WHERE deletedAt IS NULL ORDER BY name COLLATE NOCASE ASC")
-    fun getCategories(): Flow<List<CategoryEntity>>
+    @Query(
+        "SELECT * FROM CategoryEntity " +
+            "WHERE deletedAt IS NULL AND ownerUserId = :ownerUserId " +
+            "ORDER BY name COLLATE NOCASE ASC",
+    )
+    fun getCategories(ownerUserId: String): Flow<List<CategoryEntity>>
 
-    @Query("SELECT * FROM CategoryEntity WHERE id = :id AND deletedAt IS NULL")
-    suspend fun getCategoryById(id: String): CategoryEntity?
+    @Query("SELECT * FROM CategoryEntity WHERE id = :id AND ownerUserId = :ownerUserId AND deletedAt IS NULL")
+    suspend fun getCategoryById(id: String, ownerUserId: String): CategoryEntity?
 
     @Insert
     suspend fun insertCategory(category: CategoryEntity)
@@ -21,6 +25,9 @@ interface CategoryDao {
     @Update
     suspend fun updateCategory(category: CategoryEntity)
 
-    @Query("UPDATE CategoryEntity SET deletedAt = :deletedAt, updatedAt = :updatedAt WHERE id = :id")
-    suspend fun deleteCategory(deletedAt: String, updatedAt: String, id: String)
+    @Query(
+        "UPDATE CategoryEntity SET deletedAt = :deletedAt, updatedAt = :updatedAt " +
+            "WHERE id = :id AND ownerUserId = :ownerUserId",
+    )
+    suspend fun deleteCategory(deletedAt: String, updatedAt: String, id: String, ownerUserId: String)
 }
