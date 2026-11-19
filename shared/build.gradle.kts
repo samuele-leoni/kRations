@@ -77,6 +77,9 @@ kotlin {
             implementation(libs.supabase.auth)
             implementation(libs.supabase.postgrest)
 
+            // Icons
+            implementation(libs.icons.material.icons.rounded.cmp)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
