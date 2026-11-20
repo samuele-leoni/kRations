@@ -1,5 +1,6 @@
 package com.example.krations.inventory.data
 
+import com.example.krations.core.data.LOCAL_USER_ID
 import com.example.krations.inventory.data.local.dao.CategoryDao
 import com.example.krations.inventory.data.local.entity.CategoryEntity
 import com.example.krations.inventory.domain.CategoryRepository
@@ -51,6 +52,3 @@ class CategoryRepositoryImpl(
         )
     }
 }
-
-// TODO: get real user from account data
-private const val LOCAL_USER_ID = "local-user"
