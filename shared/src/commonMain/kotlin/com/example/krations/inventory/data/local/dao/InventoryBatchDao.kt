@@ -29,6 +29,22 @@ interface InventoryBatchDao {
     suspend fun updateBatch(batch: InventoryBatchEntity)
 
     @Query(
+        "UPDATE InventoryBatchEntity SET quantity = quantity + :delta, updatedAt = :updatedAt " +
+            "WHERE id = (" +
+            "SELECT id FROM InventoryBatchEntity " +
+            "WHERE productId = :productId AND ownerUserId = :ownerUserId AND deletedAt IS NULL " +
+            "AND expirationDate IS :expirationDate " +
+            "ORDER BY createdAt ASC LIMIT 1)",
+    )
+    suspend fun addToBatchQuantity(
+        delta: Double,
+        updatedAt: String,
+        productId: String,
+        ownerUserId: String,
+        expirationDate: String?,
+    ): Int
+
+    @Query(
         "UPDATE InventoryBatchEntity SET deletedAt = :deletedAt, updatedAt = :updatedAt " +
             "WHERE id = :id AND ownerUserId = :ownerUserId",
     )
