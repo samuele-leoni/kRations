@@ -78,7 +78,6 @@ kotlin {
             implementation(libs.supabase.postgrest)
 
             // Icons
-            implementation(libs.icons.material.icons.rounded.cmp)
             implementation(libs.icons.material.symbols.rounded.cmp)
 
         }

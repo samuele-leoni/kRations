@@ -20,29 +20,32 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.composables.icons.materialicons.MaterialIcons
-import com.composables.icons.materialicons.rounded.Add
-import com.composables.icons.materialicons.rounded.Check
-import com.composables.icons.materialicons.rounded.Cleaning_services
-import com.composables.icons.materialicons.rounded.Close
-import com.composables.icons.materialicons.rounded.Coffee_maker
-import com.composables.icons.materialicons.rounded.Inventory_2
-import com.composables.icons.materialicons.rounded.Kitchen
-import com.composables.icons.materialicons.rounded.Local_grocery_store
-import com.composables.icons.materialicons.rounded.Medication
-import com.composables.icons.materialicons.rounded.Search
-import com.composables.icons.materialicons.rounded.Warehouse
+import com.composables.icons.materialsymbols.MaterialSymbols
+import com.composables.icons.materialsymbols.rounded.Add
+import com.composables.icons.materialsymbols.rounded.Check
+import com.composables.icons.materialsymbols.rounded.Household_supplies
+import com.composables.icons.materialsymbols.rounded.Close
+import com.composables.icons.materialsymbols.rounded.Coffee_maker
+import com.composables.icons.materialsymbols.rounded.Inventory_2
+import com.composables.icons.materialsymbols.rounded.Kitchen
+import com.composables.icons.materialsymbols.rounded.Grocery
+import com.composables.icons.materialsymbols.rounded.Pill
+import com.composables.icons.materialsymbols.rounded.Search
+import com.composables.icons.materialsymbols.rounded.Shelves
 import com.example.krations.inventory.domain.model.Category
 import com.example.krations.inventory.domain.model.Product
 import com.example.krations.inventory.ui.state.InventoryUiState
@@ -95,9 +98,15 @@ private fun SearchField(query: String, onQueryChange: (String) -> Unit) {
         onValueChange = onQueryChange,
         placeholder = { Text("Search Inventory") },
         singleLine = true,
-        trailingIcon = { Icon(MaterialIcons.Rounded.Search, contentDescription = null) },
-        shape = RoundedCornerShape(percent = 50),
+        trailingIcon = { Icon(MaterialSymbols.Rounded.Search, contentDescription = null) },
+        shape = CircleShape,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            errorIndicatorColor = Color.Transparent
+        ),
     )
 }
 
@@ -117,6 +126,7 @@ private fun CategoryChipsRow(
             selected = selectedCategoryId == null,
             onClick = { onCategorySelected(null) },
             label = { Text("All") },
+            shape = CircleShape,
         )
         categories.forEach { category ->
             FilterChip(
@@ -124,6 +134,11 @@ private fun CategoryChipsRow(
                 onClick = { onCategorySelected(category.id) },
                 leadingIcon = { Icon(icon(category.iconName), contentDescription = null) },
                 label = { Text(category.name) },
+                shape = CircleShape,
+                colors = FilterChipDefaults.filterChipColors(
+                    labelColor = Color.DarkGray,
+                    iconColor = Color.DarkGray
+                )
             )
         }
     }
@@ -134,7 +149,7 @@ private fun ProductCard(product: Product) {
     Card(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
         shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -164,12 +179,12 @@ private fun ProductCard(product: Product) {
 private fun StockStatusIndicator(status: StockStatus) {
     val colors = MaterialTheme.colorScheme
     val containerColor = when (status) {
-        StockStatus.InStock -> colors.primaryContainer
+        StockStatus.InStock -> colors.secondaryContainer
         StockStatus.LowStock -> colors.errorContainer
         StockStatus.OutOfStock -> colors.error
     }
     val iconTint = when (status) {
-        StockStatus.InStock -> colors.onPrimaryContainer
+        StockStatus.InStock -> colors.onSecondaryContainer
         StockStatus.LowStock -> colors.onErrorContainer
         StockStatus.OutOfStock -> colors.onError
     }
@@ -185,7 +200,7 @@ private fun StockStatusIndicator(status: StockStatus) {
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                imageVector = if (status == StockStatus.InStock) MaterialIcons.Rounded.Check else MaterialIcons.Rounded.Close,
+                imageVector = if (status == StockStatus.InStock) MaterialSymbols.Rounded.Check else MaterialSymbols.Rounded.Close,
                 contentDescription = status.label,
                 tint = iconTint,
             )
@@ -200,29 +215,27 @@ private fun AddProductButton(onClick: () -> Unit, modifier: Modifier = Modifier)
         onClick = onClick,
         modifier = modifier,
         shape = CircleShape,
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
     ) {
-        Icon(MaterialIcons.Rounded.Add, contentDescription = "Add product")
+        Icon(MaterialSymbols.Rounded.Add, contentDescription = "Add product")
     }
 }
 
-// The database stores the Material Symbols name shown in the mockups, and the icon library used by
-// the project only covers the Material Icons set, so a few names are mapped to the closest icon.
 private fun icon(iconName: String?): ImageVector = when (iconName) {
-    "pill" -> MaterialIcons.Rounded.Medication
-    "grocery" -> MaterialIcons.Rounded.Local_grocery_store
-    "household_supplies" -> MaterialIcons.Rounded.Cleaning_services
-    "shelves" -> MaterialIcons.Rounded.Warehouse
-    "kitchen" -> MaterialIcons.Rounded.Kitchen
-    "coffee_maker" -> MaterialIcons.Rounded.Coffee_maker
-    else -> MaterialIcons.Rounded.Inventory_2
+    "pill" -> MaterialSymbols.Rounded.Pill
+    "grocery" -> MaterialSymbols.Rounded.Grocery
+    "household_supplies" -> MaterialSymbols.Rounded.Household_supplies
+    "shelves" -> MaterialSymbols.Rounded.Shelves
+    "kitchen" -> MaterialSymbols.Rounded.Kitchen
+    "coffee_maker" -> MaterialSymbols.Rounded.Coffee_maker
+    else -> MaterialSymbols.Rounded.Inventory_2
 }
 
 private enum class StockStatus(val label: String) {
     InStock("In Stock"),
-    LowStock("Low Stock"),
-    OutOfStock("Out of Stock"),
+    LowStock("Low\nStock"),
+    OutOfStock("Out of\nStock"),
 }
 
 private fun Product.stockStatus(): StockStatus = when {
@@ -260,7 +273,7 @@ private fun PreviewInventory(products: List<Product>, query: String) {
 }
 
 private fun previewProducts(): List<Product> = listOf(
-    previewProduct("1", "Milk", "Liters", stock = 5.0, iconName = "grocery", minQuantity = 2.0, categoryId = "cat-2"),
+    previewProduct("1", "Milk", "Liters", stock = 5.0, iconName = "kitchen", minQuantity = 2.0, categoryId = "cat-2"),
     previewProduct("2", "Aspirin", "pills", stock = 0.0, iconName = "pill", minQuantity = 10.0, categoryId = "cat-3"),
     previewProduct(
         "3",
