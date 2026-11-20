@@ -148,7 +148,7 @@ private fun ProductCard(product: Product) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = product.name, style = MaterialTheme.typography.titleLarge)
                 Text(
-                    text = "(${formatQuantity(product.stock)} ${product.unit})",
+                    text = "(${formatStock(product)})",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -228,10 +228,6 @@ private fun Product.stockStatus(): StockStatus = when {
     stock < minQuantity -> StockStatus.LowStock
     else -> StockStatus.InStock
 }
-
-// Drops the decimal part when it is not needed, so the card shows "(5 Liters)" instead of "(5.0 Liters)"
-private fun formatQuantity(quantity: Double): String =
-    if (quantity % 1.0 == 0.0) quantity.toInt().toString() else quantity.toString()
 
 @Preview(showBackground = true)
 @Composable
