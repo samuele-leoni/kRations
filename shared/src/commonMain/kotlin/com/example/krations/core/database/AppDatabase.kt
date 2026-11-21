@@ -1,3 +1,5 @@
+@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+
 package com.example.krations.core.database
 
 import androidx.room3.AutoMigration
@@ -10,10 +12,10 @@ import com.example.krations.inventory.data.local.dao.ProductDao
 import com.example.krations.inventory.data.local.entity.CategoryEntity
 import com.example.krations.inventory.data.local.entity.ProductEntity
 import com.example.krations.shoppinglist.data.local.dao.ShoppingListItemDao
-import com.example.krations.shoppinglist.data.local.entity.ShoppingListItem
+import com.example.krations.shoppinglist.data.local.entity.ShoppingListItemEntity
 
 @Database(
-    entities = [ShoppingListItem::class, ProductEntity::class, CategoryEntity::class],
+    entities = [ShoppingListItemEntity::class, ProductEntity::class, CategoryEntity::class],
     version = 2,
     autoMigrations = [AutoMigration(from = 1, to = 2)],
 )

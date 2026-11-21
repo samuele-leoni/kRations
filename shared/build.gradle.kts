@@ -77,6 +77,14 @@ kotlin {
             implementation(libs.supabase.auth)
             implementation(libs.supabase.postgrest)
 
+            // Icons
+            implementation(libs.icons.material.icons.rounded.cmp)
+
+            // DateTime
+            implementation(libs.kotlinx.datetime)
+
+            // Logging
+            implementation(libs.kermit)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
