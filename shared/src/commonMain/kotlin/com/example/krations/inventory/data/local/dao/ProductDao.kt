@@ -25,8 +25,17 @@ interface ProductDao {
     )
     fun searchProducts(query: String, categoryId: String?, ownerUserId: String): Flow<List<ProductWithStock>>
 
-    @Query("SELECT * FROM ProductEntity WHERE id = :id AND ownerUserId = :ownerUserId AND deletedAt IS NULL")
-    suspend fun getProductById(id: String, ownerUserId: String): ProductEntity?
+    @Query(
+        "SELECT p.*, COALESCE(SUM(b.quantity), 0) AS totalQuantity " +
+            "FROM ProductEntity p " +
+            "LEFT JOIN InventoryBatchEntity b ON b.productId = p.id AND b.ownerUserId = p.ownerUserId " +
+            "AND b.deletedAt IS NULL " +
+            "WHERE p.deletedAt IS NULL " +
+            "AND p.id = :id " +
+            "AND p.ownerUserId = :ownerUserId " +
+            "GROUP BY p.id",
+    )
+    suspend fun getProductById(id: String, ownerUserId: String): ProductWithStock?
 
     @Query(
         "SELECT * FROM ProductEntity " +

@@ -20,27 +20,37 @@ class ProductRepositoryImpl(
             rows.map(ProductWithStock::toProduct)
         }
 
-    override suspend fun addProduct(name: String, unit: String, categoryId: String?) =
-        now().toString().let { timestamp ->
-            productDao.insertProduct(
-                ProductEntity(
-                    id = Uuid.random().toString(),
-                    ownerUserId = LOCAL_USER_ID,
-                    categoryId = categoryId,
-                    name = name,
-                    description = null,
-                    iconName = null,
-                    unit = unit,
-                    minQuantity = 0.0,
-                    createdAt = timestamp,
-                    updatedAt = timestamp,
-                    deletedAt = null,
-                ),
-            )
-        }
+    override suspend fun getProduct(id: String): Product? =
+        productDao.getProductById(id, LOCAL_USER_ID)?.toProduct()
+
+    override suspend fun addProduct(
+        name: String,
+        description: String?,
+        unit: String,
+        categoryId: String?,
+        minQuantity: Double,
+        expiryAlertDays: Int,
+    ) = now().toString().let { timestamp ->
+        productDao.insertProduct(
+            ProductEntity(
+                id = Uuid.random().toString(),
+                ownerUserId = LOCAL_USER_ID,
+                categoryId = categoryId,
+                name = name,
+                description = description,
+                iconName = null,
+                unit = unit,
+                minQuantity = minQuantity,
+                expiryAlertDays = expiryAlertDays,
+                createdAt = timestamp,
+                updatedAt = timestamp,
+                deletedAt = null,
+            ),
+        )
+    }
 
     override suspend fun updateProduct(product: Product) {
-        val existing = productDao.getProductById(product.id, LOCAL_USER_ID) ?: return
+        val existing = productDao.getProductById(product.id, LOCAL_USER_ID)?.product ?: return
         productDao.updateProduct(
             existing.copy(
                 categoryId = product.categoryId,
@@ -49,6 +59,7 @@ class ProductRepositoryImpl(
                 iconName = product.iconName,
                 unit = product.unit,
                 minQuantity = product.minQuantity,
+                expiryAlertDays = product.expiryAlertDays,
                 updatedAt = now().toString(),
             ),
         )

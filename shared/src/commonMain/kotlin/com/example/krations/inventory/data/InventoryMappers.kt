@@ -15,6 +15,7 @@ fun ProductWithStock.toProduct(): Product = Product(
     iconName = product.iconName,
     categoryId = product.categoryId,
     minQuantity = product.minQuantity,
+    expiryAlertDays = product.expiryAlertDays,
     stock = totalQuantity,
 )
 

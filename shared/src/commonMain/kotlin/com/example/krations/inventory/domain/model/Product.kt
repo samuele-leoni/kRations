@@ -8,5 +8,6 @@ data class Product(
     val iconName: String?,
     val categoryId: String?,
     val minQuantity: Double,
+    val expiryAlertDays: Int,
     val stock: Double,
 )

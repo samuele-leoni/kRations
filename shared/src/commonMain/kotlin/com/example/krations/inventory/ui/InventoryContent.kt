@@ -300,6 +300,7 @@ private fun previewProduct(
     stock: Double,
     iconName: String,
     minQuantity: Double = 0.0,
+    expiryAlertDays: Int = 7,
     categoryId: String? = null,
 ): Product = Product(
     id = id,
@@ -310,6 +311,7 @@ private fun previewProduct(
     unit = unit,
     stock = stock,
     minQuantity = minQuantity,
+    expiryAlertDays = expiryAlertDays,
 )
 
 private fun previewCategory(id: String, name: String, iconName: String): Category =

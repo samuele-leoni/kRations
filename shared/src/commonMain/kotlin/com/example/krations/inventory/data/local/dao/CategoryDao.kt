@@ -26,6 +26,12 @@ interface CategoryDao {
     suspend fun updateCategory(category: CategoryEntity)
 
     @Query(
+        "SELECT COUNT(*) FROM ProductEntity " +
+            "WHERE categoryId = :categoryId AND ownerUserId = :ownerUserId AND deletedAt IS NULL",
+    )
+    suspend fun countActiveProducts(categoryId: String, ownerUserId: String): Int
+
+    @Query(
         "UPDATE CategoryEntity SET deletedAt = :deletedAt, updatedAt = :updatedAt " +
             "WHERE id = :id AND ownerUserId = :ownerUserId",
     )

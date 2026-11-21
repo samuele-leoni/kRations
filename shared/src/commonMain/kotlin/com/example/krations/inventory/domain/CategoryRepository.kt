@@ -10,5 +10,11 @@ interface CategoryRepository {
 
     suspend fun updateCategory(category: Category)
 
-    suspend fun deleteCategory(id: String)
+    suspend fun deleteCategory(id: String): DeleteCategoryResult
+}
+
+sealed interface DeleteCategoryResult {
+    data object Deleted : DeleteCategoryResult
+
+    data class Blocked(val productCount: Int) : DeleteCategoryResult
 }
