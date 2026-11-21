@@ -2,6 +2,7 @@ package com.example.krations.shoppinglist.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.krations.shoppinglist.domain.SetItemPurchasedUseCase
 import com.example.krations.shoppinglist.domain.ShoppingListRepository
 import com.example.krations.shoppinglist.domain.model.ShoppingListItem
 import com.example.krations.shoppinglist.ui.state.ShoppingListTab
@@ -10,11 +11,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class ShoppingListViewModel(
     private val repository: ShoppingListRepository,
+    private val setItemPurchasedUseCase: SetItemPurchasedUseCase
 ) : ViewModel() {
     private val selectedTab = MutableStateFlow(ShoppingListTab.ToBuy)
     private val searchQuery = MutableStateFlow("")
@@ -83,13 +86,15 @@ class ShoppingListViewModel(
         viewModelScope.launch { repository.deletePurchasedItems() }
     }
 
-    fun setItemPurchased(id: String) {
-        // TODO increment item quantity in inventory
-        viewModelScope.launch { repository.setItemPurchased(id) }
+    fun setItemPurchased(item: ShoppingListItem, quantity: Double, expirationDate: String?) {
+        viewModelScope.launch { setItemPurchasedUseCase(item, quantity, expirationDate) }
     }
 
     fun setAllItemsPurchased() {
-        // TODO increment items quantity in inventory
-        viewModelScope.launch { repository.setAllItemsPurchased() }
+        viewModelScope.launch {
+            repository.observeItems().first()
+                .filter { !it.isPurchased }
+                .forEach { setItemPurchasedUseCase(it, it.quantityNeeded, null) }
+        }
     }
 }

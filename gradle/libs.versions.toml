@@ -21,7 +21,9 @@ sqlite = "2.7.1"
 ksp = "2.3.11"
 koin = "4.2.2"
 supabase = "3.9.0"
-ktor = "3.6.0"
+ktor = "3.6.1"
+kotlinx-datetime = "0.8.0"
+kermit = "2.2.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -59,6 +61,8 @@ supabase-postgrest = { module = "io.github.jan-tennert.supabase:postgrest-kt", v
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

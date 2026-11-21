@@ -36,7 +36,7 @@ fun ShoppingListContent(
     onIncrease: (ShoppingListItem) -> Unit,
     onDecrease: (ShoppingListItem) -> Unit,
     onDelete: (String) -> Unit,
-    onItemBought: (String) -> Unit,
+    onItemBought: (ShoppingListItem) -> Unit,
     onItemClick: (ShoppingListItem) -> Unit,
     onAddClick: () -> Unit,
     onDeleteAllPurchased: () -> Unit,
@@ -90,7 +90,7 @@ fun ShoppingListContent(
                             onIncrease = { onIncrease(it) },
                             onDecrease = { onDecrease(it) },
                             onDelete = { onDelete(it.id) },
-                            onItemBought = { onItemBought(it.id) },
+                            onItemBought = { onItemBought(it) },
                             onClick = { onItemClick(it) },
                         )
                     }

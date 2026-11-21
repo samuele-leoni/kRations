@@ -79,6 +79,12 @@ kotlin {
 
             // Icons
             implementation(libs.icons.material.icons.rounded.cmp)
+
+            // DateTime
+            implementation(libs.kotlinx.datetime)
+
+            // Logging
+            implementation(libs.kermit)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

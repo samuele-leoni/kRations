@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.krations.shoppinglist.domain.model.ShoppingListItem
 import com.example.krations.shoppinglist.ui.components.ShoppingListItemDetail
+import com.example.krations.shoppinglist.ui.components.ShoppingListItemPurchase
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -19,6 +20,8 @@ fun ShoppingListScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var showSheet by remember { mutableStateOf(false) }
     var editingItem by remember { mutableStateOf<ShoppingListItem?>(null) }
+    var purchasingItem by remember { mutableStateOf<ShoppingListItem?>(null) }
+
     ShoppingListContent(
         modifier = modifier,
         uiState = uiState,
@@ -29,7 +32,7 @@ fun ShoppingListScreen(
         onDelete = viewModel::deleteItem,
         onAddClick = { editingItem = null; showSheet = true },
         onItemClick = { editingItem = it; showSheet = true },
-        onItemBought = viewModel::setItemPurchased,
+        onItemBought = { purchasingItem = it },
         onDeleteAllPurchased = viewModel::deletePurchasedItems,
         onPurchaseAll = viewModel::setAllItemsPurchased,
     )
@@ -42,6 +45,16 @@ fun ShoppingListScreen(
                     viewModel.updateItem(it.copy(name = name, quantityNeeded = quantity, unit = unit))
                 } ?: viewModel.addItem(name, quantity, unit)
                 showSheet = false
+            },
+        )
+    }
+    purchasingItem?.let { item ->
+        ShoppingListItemPurchase(
+            item = item,
+            onDismiss = { purchasingItem = null },
+            onConfirm = { quantity, expirationDate ->
+                viewModel.setItemPurchased(item, quantity, expirationDate)
+                purchasingItem = null
             },
         )
     }
