@@ -28,6 +28,14 @@ interface ProductDao {
     @Query("SELECT * FROM ProductEntity WHERE id = :id AND ownerUserId = :ownerUserId AND deletedAt IS NULL")
     suspend fun getProductById(id: String, ownerUserId: String): ProductEntity?
 
+    @Query(
+        "SELECT * FROM ProductEntity " +
+            "WHERE ownerUserId = :ownerUserId AND deletedAt IS NULL " +
+            "AND TRIM(name) = TRIM(:name) COLLATE NOCASE " +
+            "ORDER BY createdAt ASC LIMIT 1",
+    )
+    suspend fun getProductByName(name: String, ownerUserId: String): ProductEntity?
+
     @Insert
     suspend fun insertProduct(product: ProductEntity)
 

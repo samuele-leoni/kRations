@@ -4,6 +4,8 @@ import com.example.krations.core.data.LOCAL_USER_ID
 import com.example.krations.inventory.data.local.dao.InventoryBatchDao
 import com.example.krations.inventory.data.local.dao.ProductDao
 import com.example.krations.inventory.data.local.entity.InventoryBatchEntity
+import com.example.krations.inventory.data.local.entity.ProductEntity
+import com.example.krations.inventory.domain.AddQuantityResult
 import com.example.krations.inventory.domain.InventoryBatchRepository
 import com.example.krations.inventory.domain.model.InventoryBatch
 import kotlin.time.Clock.System.now
@@ -21,22 +23,57 @@ class InventoryBatchRepositoryImpl(
             .getBatchesForProduct(productId, LOCAL_USER_ID)
             .map { rows -> rows.map(InventoryBatchEntity::toBatch) }
 
-    override suspend fun addQuantity(productId: String, quantity: Double, expirationDate: String?) {
+    override suspend fun addQuantity(
+        productId: String,
+        quantity: Double,
+        expirationDate: String?,
+    ): AddQuantityResult {
         require(quantity > 0.0) { "addQuantity needs a positive quantity, got $quantity" }
 
-        if (productDao.getProductById(productId, LOCAL_USER_ID) == null) return
+        if (productDao.getProductById(productId, LOCAL_USER_ID) == null) {
+            return AddQuantityResult.UnknownProduct(productId)
+        }
 
         val timestamp = now().toString()
-        val incremented = batchDao.addToBatchQuantity(
-            delta = quantity,
-            updatedAt = timestamp,
-            productId = productId,
-            ownerUserId = LOCAL_USER_ID,
-            expirationDate = expirationDate,
-        )
-        if (incremented > 0) return
+        addToStock(productId, quantity, expirationDate, timestamp)
+        return AddQuantityResult.Added(productId)
+    }
 
-        insertBatch(productId, quantity, expirationDate, timestamp)
+    override suspend fun addQuantity(
+        productName: String,
+        productUnit: String,
+        quantity: Double,
+        expirationDate: String?,
+    ): AddQuantityResult {
+        require(quantity > 0.0) { "addQuantity needs a positive quantity, got $quantity" }
+
+        val name = productName.trim()
+        require(name.isNotEmpty()) { "addQuantity needs a product name, got \"$productName\"" }
+
+        val timestamp = now().toString()
+        val existing = productDao.getProductByName(name, LOCAL_USER_ID)
+        if (existing != null) {
+            addToStock(existing.id, quantity, expirationDate, timestamp)
+            return AddQuantityResult.Added(existing.id)
+        }
+
+        val productId = Uuid.random().toString()
+        productDao.insertProduct(
+            ProductEntity(
+                id = productId,
+                ownerUserId = LOCAL_USER_ID,
+                categoryId = null,
+                name = name,
+                description = null,
+                iconName = null,
+                unit = productUnit.trim().ifEmpty { "unit" },
+                createdAt = timestamp,
+                updatedAt = timestamp,
+                deletedAt = null,
+            ),
+        )
+        addToStock(productId, quantity, expirationDate, timestamp)
+        return AddQuantityResult.Created(productId)
     }
 
     override suspend fun addBatch(productId: String, quantity: Double, expirationDate: String?) {
@@ -61,6 +98,22 @@ class InventoryBatchRepositoryImpl(
             id = batchId,
             ownerUserId = LOCAL_USER_ID,
         )
+    }
+
+    private suspend fun addToStock(
+        productId: String,
+        quantity: Double,
+        expirationDate: String?,
+        timestamp: String,
+    ) {
+        val incremented = batchDao.addToBatchQuantity(
+            delta = quantity,
+            updatedAt = timestamp,
+            productId = productId,
+            ownerUserId = LOCAL_USER_ID,
+            expirationDate = expirationDate,
+        )
+        if (incremented == 0) insertBatch(productId, quantity, expirationDate, timestamp)
     }
 
     private suspend fun insertBatch(
