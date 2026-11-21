@@ -80,6 +80,9 @@ kotlin {
             // Icons
             implementation(libs.icons.material.symbols.rounded.cmp)
 
+            // Navigation
+            implementation(libs.jetbrains.navigation3.ui)
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
