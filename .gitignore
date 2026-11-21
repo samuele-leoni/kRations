@@ -15,6 +15,7 @@ captures/
 .idea/shelf/
 .idea/workspace.xml
 .idea/deploymentTargetSelector.xml
+.idea/inspectionProfiles/Project_Default.xml
 .idea/tasks.xml
 .idea/.name
 .idea/compiler.xml
