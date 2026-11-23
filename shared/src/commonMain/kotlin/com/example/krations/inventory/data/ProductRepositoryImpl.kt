@@ -17,12 +17,15 @@ class ProductRepositoryImpl(
 
     override fun observeProducts(
         query: String,
-        categoryId: String?,
-        noCategoryOnly: Boolean,
-    ): Flow<List<Product>> =
-        productDao.searchProducts(query.trim(), categoryId, noCategoryOnly, LOCAL_USER_ID).map { rows ->
-            rows.map(ProductWithStock::toProduct)
-        }
+        categoryIds: Set<String>,
+        includeUncategorized: Boolean,
+    ): Flow<List<Product>> {
+        val ids = categoryIds.toList().ifEmpty { listOf(NO_CATEGORY_SENTINEL) }
+        val noCategoryFilter = categoryIds.isEmpty() && !includeUncategorized
+        return productDao
+            .searchProducts(query.trim(), ids, includeUncategorized, noCategoryFilter, LOCAL_USER_ID)
+            .map { rows -> rows.map(ProductWithStock::toProduct) }
+    }
 
     override suspend fun getProduct(id: String): Product? =
         productDao.getProductById(id, LOCAL_USER_ID)?.toProduct()
@@ -80,5 +83,9 @@ class ProductRepositoryImpl(
             id = id,
             ownerUserId = LOCAL_USER_ID,
         )
+    }
+
+    private companion object {
+        private const val NO_CATEGORY_SENTINEL = "no-category-selected"
     }
 }

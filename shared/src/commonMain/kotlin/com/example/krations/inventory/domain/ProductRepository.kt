@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.Flow
 interface ProductRepository {
     fun observeProducts(
         query: String,
-        categoryId: String?,
-        noCategoryOnly: Boolean = false,
+        categoryIds: Set<String>,
+        includeUncategorized: Boolean,
     ): Flow<List<Product>>
 
     suspend fun getProduct(id: String): Product?

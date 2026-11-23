@@ -17,8 +17,8 @@ interface ProductDao {
             "AND b.deletedAt IS NULL " +
             "WHERE p.deletedAt IS NULL " +
             "AND p.ownerUserId = :ownerUserId " +
-            "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +
-            "AND (:noCategoryOnly = 0 OR p.categoryId IS NULL) " +
+            "AND (:noCategoryFilter = 1 OR p.categoryId IN (:categoryIds) " +
+            "OR (:includeUncategorized = 1 AND p.categoryId IS NULL)) " +
             "AND (:query = '' OR p.name LIKE '%' || :query || '%' ESCAPE '\\' " +
             "OR p.description LIKE '%' || :query || '%' ESCAPE '\\') " +
             "GROUP BY p.id " +
@@ -26,8 +26,9 @@ interface ProductDao {
     )
     fun searchProducts(
         query: String,
-        categoryId: String?,
-        noCategoryOnly: Boolean,
+        categoryIds: List<String>,
+        includeUncategorized: Boolean,
+        noCategoryFilter: Boolean,
         ownerUserId: String,
     ): Flow<List<ProductWithStock>>
 

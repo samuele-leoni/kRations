@@ -57,8 +57,9 @@ import com.example.krations.inventory.ui.state.InventoryUiState
 fun InventoryContent(
     uiState: InventoryUiState,
     onSearchQueryChange: (String) -> Unit,
-    onCategorySelected: (String?) -> Unit,
-    onNoCategorySelected: () -> Unit,
+    onCategoryToggled: (String) -> Unit,
+    onUncategorizedToggled: () -> Unit,
+    onFiltersCleared: () -> Unit,
     onAddProduct: () -> Unit,
     onEditProduct: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -69,15 +70,20 @@ fun InventoryContent(
 
             CategoryChipsRow(
                 categories = uiState.categories,
-                selectedCategoryId = uiState.selectedCategoryId,
-                noCategoryOnly = uiState.noCategoryOnly,
-                onCategorySelected = onCategorySelected,
-                onNoCategorySelected = onNoCategorySelected,
+                selectedCategoryIds = uiState.selectedCategoryIds,
+                uncategorizedSelected = uiState.uncategorizedSelected,
+                onCategoryToggled = onCategoryToggled,
+                onUncategorizedToggled = onUncategorizedToggled,
+                onFiltersCleared = onFiltersCleared,
             )
 
             if (uiState.products.isEmpty()) {
                 Text(
-                    text = "No products found",
+                    text = if (uiState.hasActiveFilters) {
+                        "No products match your filters"
+                    } else {
+                        "Your inventory is empty"
+                    },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(16.dp),
@@ -123,10 +129,11 @@ private fun SearchField(query: String, onQueryChange: (String) -> Unit) {
 @Composable
 private fun CategoryChipsRow(
     categories: List<Category>,
-    selectedCategoryId: String?,
-    noCategoryOnly: Boolean,
-    onCategorySelected: (String?) -> Unit,
-    onNoCategorySelected: () -> Unit,
+    selectedCategoryIds: Set<String>,
+    uncategorizedSelected: Boolean,
+    onCategoryToggled: (String) -> Unit,
+    onUncategorizedToggled: () -> Unit,
+    onFiltersCleared: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -135,15 +142,15 @@ private fun CategoryChipsRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         FilterChip(
-            selected = !noCategoryOnly && selectedCategoryId == null,
-            onClick = { onCategorySelected(null) },
+            selected = selectedCategoryIds.isEmpty() && !uncategorizedSelected,
+            onClick = onFiltersCleared,
             label = { Text("All") },
             shape = CircleShape,
         )
         categories.forEach { category ->
             FilterChip(
-                selected = selectedCategoryId == category.id,
-                onClick = { onCategorySelected(category.id) },
+                selected = category.id in selectedCategoryIds,
+                onClick = { onCategoryToggled(category.id) },
                 leadingIcon = { Icon(icon(category.iconName), contentDescription = null) },
                 label = { Text(category.name) },
                 shape = CircleShape,
@@ -155,8 +162,8 @@ private fun CategoryChipsRow(
         }
 
         FilterChip(
-            selected = noCategoryOnly,
-            onClick = { if (noCategoryOnly) onCategorySelected(null) else onNoCategorySelected() },
+            selected = uncategorizedSelected,
+            onClick = onUncategorizedToggled,
             leadingIcon = { Icon(MaterialSymbols.Rounded.Inventory_2, contentDescription = null) },
             label = { Text("No category") },
             shape = CircleShape,
@@ -293,8 +300,9 @@ private fun PreviewInventory(products: List<Product>, query: String) {
                 searchQuery = query,
             ),
             onSearchQueryChange = {},
-            onCategorySelected = {},
-            onNoCategorySelected = {},
+            onCategoryToggled = {},
+            onUncategorizedToggled = {},
+            onFiltersCleared = {},
             onAddProduct = {},
             onEditProduct = {},
         )

@@ -7,6 +7,9 @@ data class InventoryUiState(
     val products: List<Product> = emptyList(),
     val categories: List<Category> = emptyList(),
     val searchQuery: String = "",
-    val selectedCategoryId: String? = null,
-    val noCategoryOnly: Boolean = false,
-)
+    val selectedCategoryIds: Set<String> = emptySet(),
+    val uncategorizedSelected: Boolean = false,
+) {
+    val hasActiveFilters: Boolean
+        get() = searchQuery.isNotBlank() || selectedCategoryIds.isNotEmpty() || uncategorizedSelected
+}

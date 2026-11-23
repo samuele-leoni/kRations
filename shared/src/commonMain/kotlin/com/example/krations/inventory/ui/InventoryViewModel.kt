@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class InventoryViewModel(
@@ -23,45 +24,50 @@ class InventoryViewModel(
 ) : ViewModel() {
 
     private val searchQuery = MutableStateFlow("")
-    private val selectedCategoryId = MutableStateFlow<String?>(null)
-    private val noCategoryOnly = MutableStateFlow(false)
+    private val selectedCategoryIds = MutableStateFlow<Set<String>>(emptySet())
+    private val uncategorizedSelected = MutableStateFlow(false)
 
     fun onSearchQueryChange(query: String) {
         searchQuery.value = query
     }
 
-    fun onCategorySelected(categoryId: String?) {
-        selectedCategoryId.value = categoryId
-        noCategoryOnly.value = false
-    }
-
-    fun onNoCategorySelected() {
-        selectedCategoryId.value = null
-        noCategoryOnly.value = true
-    }
-
-    // The search field fires on every keystroke, so the filter is debounced before reaching SQLite.
-    private val products = combine(searchQuery, selectedCategoryId, noCategoryOnly) { query, categoryId, uncategorized ->
-        Filters(query.trim(), categoryId, uncategorized)
-    }
-        .debounce(TEXT_DEBOUNCE)
-        .flatMapLatest { (query, categoryId, uncategorized) ->
-            productRepository.observeProducts(query, categoryId, uncategorized)
+    fun onCategoryToggled(categoryId: String) {
+        selectedCategoryIds.update { current ->
+            if (categoryId in current) current - categoryId else current + categoryId
         }
+    }
+
+    fun onUncategorizedToggled() {
+        uncategorizedSelected.update { current -> !current }
+    }
+
+    fun onFiltersCleared() {
+        selectedCategoryIds.value = emptySet()
+        uncategorizedSelected.value = false
+    }
+
+    private val products =
+        combine(searchQuery, selectedCategoryIds, uncategorizedSelected) { query, categoryIds, uncategorized ->
+            Filters(query.trim(), categoryIds, uncategorized)
+        }
+            .debounce(TEXT_DEBOUNCE)
+            .flatMapLatest { (query, categoryIds, uncategorized) ->
+                productRepository.observeProducts(query, categoryIds, uncategorized)
+            }
 
     val uiState: StateFlow<InventoryUiState> = combine(
         products,
         categoryRepository.observeCategories(),
         searchQuery,
-        selectedCategoryId,
-        noCategoryOnly,
-    ) { items, categories, query, categoryId, uncategorized ->
+        selectedCategoryIds,
+        uncategorizedSelected,
+    ) { items, categories, query, categoryIds, uncategorized ->
         InventoryUiState(
             products = items,
             categories = categories,
             searchQuery = query,
-            selectedCategoryId = categoryId,
-            noCategoryOnly = uncategorized,
+            selectedCategoryIds = categoryIds,
+            uncategorizedSelected = uncategorized,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -69,7 +75,11 @@ class InventoryViewModel(
         initialValue = InventoryUiState(),
     )
 
-    private data class Filters(val query: String, val categoryId: String?, val noCategoryOnly: Boolean)
+    private data class Filters(
+        val query: String,
+        val categoryIds: Set<String>,
+        val includeUncategorized: Boolean,
+    )
 
     companion object {
         private val TEXT_DEBOUNCE = 300.milliseconds

@@ -21,8 +21,9 @@ fun InventoryScreen(
             modifier = modifier,
             uiState = uiState,
             onSearchQueryChange = viewModel::onSearchQueryChange,
-            onCategorySelected = viewModel::onCategorySelected,
-            onNoCategorySelected = viewModel::onNoCategorySelected,
+            onCategoryToggled = viewModel::onCategoryToggled,
+            onUncategorizedToggled = viewModel::onUncategorizedToggled,
+            onFiltersCleared = viewModel::onFiltersCleared,
             onAddProduct = onAddProduct,
             onEditProduct = onEditProduct,
         )
