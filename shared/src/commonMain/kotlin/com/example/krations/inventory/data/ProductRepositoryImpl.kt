@@ -15,8 +15,12 @@ class ProductRepositoryImpl(
     private val productDao: ProductDao,
 ) : ProductRepository {
 
-    override fun observeProducts(query: String, categoryId: String?): Flow<List<Product>> =
-        productDao.searchProducts(query.trim(), categoryId, LOCAL_USER_ID).map { rows ->
+    override fun observeProducts(
+        query: String,
+        categoryId: String?,
+        noCategoryOnly: Boolean,
+    ): Flow<List<Product>> =
+        productDao.searchProducts(query.trim(), categoryId, noCategoryOnly, LOCAL_USER_ID).map { rows ->
             rows.map(ProductWithStock::toProduct)
         }
 
@@ -30,23 +34,27 @@ class ProductRepositoryImpl(
         categoryId: String?,
         minQuantity: Double,
         expiryAlertDays: Int,
-    ) = now().toString().let { timestamp ->
-        productDao.insertProduct(
-            ProductEntity(
-                id = Uuid.random().toString(),
-                ownerUserId = LOCAL_USER_ID,
-                categoryId = categoryId,
-                name = name,
-                description = description,
-                iconName = null,
-                unit = unit,
-                minQuantity = minQuantity,
-                expiryAlertDays = expiryAlertDays,
-                createdAt = timestamp,
-                updatedAt = timestamp,
-                deletedAt = null,
-            ),
-        )
+    ): String {
+        val id = Uuid.random().toString()
+        now().toString().let { timestamp ->
+            productDao.insertProduct(
+                ProductEntity(
+                    id = id,
+                    ownerUserId = LOCAL_USER_ID,
+                    categoryId = categoryId,
+                    name = name,
+                    description = description,
+                    iconName = null,
+                    unit = unit,
+                    minQuantity = minQuantity,
+                    expiryAlertDays = expiryAlertDays,
+                    createdAt = timestamp,
+                    updatedAt = timestamp,
+                    deletedAt = null,
+                ),
+            )
+        }
+        return id
     }
 
     override suspend fun updateProduct(product: Product) {

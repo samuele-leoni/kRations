@@ -8,4 +8,5 @@ data class InventoryUiState(
     val categories: List<Category> = emptyList(),
     val searchQuery: String = "",
     val selectedCategoryId: String? = null,
+    val noCategoryOnly: Boolean = false,
 )

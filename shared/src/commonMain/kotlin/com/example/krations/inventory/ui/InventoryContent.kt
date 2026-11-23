@@ -1,10 +1,12 @@
 package com.example.krations.inventory.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import com.example.krations.core.ui.utils.formatQuantity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,7 +58,9 @@ fun InventoryContent(
     uiState: InventoryUiState,
     onSearchQueryChange: (String) -> Unit,
     onCategorySelected: (String?) -> Unit,
+    onNoCategorySelected: () -> Unit,
     onAddProduct: () -> Unit,
+    onEditProduct: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize().safeContentPadding().imePadding()) {
@@ -65,7 +70,9 @@ fun InventoryContent(
             CategoryChipsRow(
                 categories = uiState.categories,
                 selectedCategoryId = uiState.selectedCategoryId,
+                noCategoryOnly = uiState.noCategoryOnly,
                 onCategorySelected = onCategorySelected,
+                onNoCategorySelected = onNoCategorySelected,
             )
 
             if (uiState.products.isEmpty()) {
@@ -76,9 +83,12 @@ fun InventoryContent(
                     modifier = Modifier.padding(16.dp),
                 )
             } else {
-                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(bottom = 88.dp),
+                ) {
                     items(uiState.products, key = { product -> product.id }) { product ->
-                        ProductCard(product = product)
+                        ProductCard(product = product, onClick = { onEditProduct(product.id) })
                     }
                 }
             }
@@ -114,7 +124,9 @@ private fun SearchField(query: String, onQueryChange: (String) -> Unit) {
 private fun CategoryChipsRow(
     categories: List<Category>,
     selectedCategoryId: String?,
+    noCategoryOnly: Boolean,
     onCategorySelected: (String?) -> Unit,
+    onNoCategorySelected: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -123,7 +135,7 @@ private fun CategoryChipsRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         FilterChip(
-            selected = selectedCategoryId == null,
+            selected = !noCategoryOnly && selectedCategoryId == null,
             onClick = { onCategorySelected(null) },
             label = { Text("All") },
             shape = CircleShape,
@@ -141,13 +153,28 @@ private fun CategoryChipsRow(
                 )
             )
         }
+
+        FilterChip(
+            selected = noCategoryOnly,
+            onClick = { if (noCategoryOnly) onCategorySelected(null) else onNoCategorySelected() },
+            leadingIcon = { Icon(MaterialSymbols.Rounded.Inventory_2, contentDescription = null) },
+            label = { Text("No category") },
+            shape = CircleShape,
+            colors = FilterChipDefaults.filterChipColors(
+                labelColor = Color.DarkGray,
+                iconColor = Color.DarkGray
+            ),
+        )
     }
 }
 
 @Composable
-private fun ProductCard(product: Product) {
+private fun ProductCard(product: Product, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
     ) {
@@ -165,7 +192,7 @@ private fun ProductCard(product: Product) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = product.name, style = MaterialTheme.typography.titleLarge)
                 Text(
-                    text = "(${formatStock(product)})",
+                    text = "(${product.stock.formatQuantity()} ${product.unit})",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -267,7 +294,9 @@ private fun PreviewInventory(products: List<Product>, query: String) {
             ),
             onSearchQueryChange = {},
             onCategorySelected = {},
+            onNoCategorySelected = {},
             onAddProduct = {},
+            onEditProduct = {},
         )
     }
 }

@@ -9,6 +9,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun InventoryScreen(
+    onAddProduct: () -> Unit,
+    onEditProduct: (String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: InventoryViewModel = koinViewModel(),
 ) {
@@ -20,7 +22,9 @@ fun InventoryScreen(
             uiState = uiState,
             onSearchQueryChange = viewModel::onSearchQueryChange,
             onCategorySelected = viewModel::onCategorySelected,
-            onAddProduct = {},
+            onNoCategorySelected = viewModel::onNoCategorySelected,
+            onAddProduct = onAddProduct,
+            onEditProduct = onEditProduct,
         )
     }
 }

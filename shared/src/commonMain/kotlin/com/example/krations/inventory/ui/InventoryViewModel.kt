@@ -24,6 +24,7 @@ class InventoryViewModel(
 
     private val searchQuery = MutableStateFlow("")
     private val selectedCategoryId = MutableStateFlow<String?>(null)
+    private val noCategoryOnly = MutableStateFlow(false)
 
     fun onSearchQueryChange(query: String) {
         searchQuery.value = query
@@ -31,26 +32,36 @@ class InventoryViewModel(
 
     fun onCategorySelected(categoryId: String?) {
         selectedCategoryId.value = categoryId
+        noCategoryOnly.value = false
+    }
+
+    fun onNoCategorySelected() {
+        selectedCategoryId.value = null
+        noCategoryOnly.value = true
     }
 
     // The search field fires on every keystroke, so the filter is debounced before reaching SQLite.
-    private val products = combine(searchQuery, selectedCategoryId) { query, categoryId ->
-        Filters(query.trim(), categoryId)
+    private val products = combine(searchQuery, selectedCategoryId, noCategoryOnly) { query, categoryId, uncategorized ->
+        Filters(query.trim(), categoryId, uncategorized)
     }
         .debounce(TEXT_DEBOUNCE)
-        .flatMapLatest { (query, categoryId) -> productRepository.observeProducts(query, categoryId) }
+        .flatMapLatest { (query, categoryId, uncategorized) ->
+            productRepository.observeProducts(query, categoryId, uncategorized)
+        }
 
     val uiState: StateFlow<InventoryUiState> = combine(
         products,
         categoryRepository.observeCategories(),
         searchQuery,
         selectedCategoryId,
-    ) { items, categories, query, categoryId ->
+        noCategoryOnly,
+    ) { items, categories, query, categoryId, uncategorized ->
         InventoryUiState(
             products = items,
             categories = categories,
             searchQuery = query,
             selectedCategoryId = categoryId,
+            noCategoryOnly = uncategorized,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -58,7 +69,7 @@ class InventoryViewModel(
         initialValue = InventoryUiState(),
     )
 
-    private data class Filters(val query: String, val categoryId: String?)
+    private data class Filters(val query: String, val categoryId: String?, val noCategoryOnly: Boolean)
 
     companion object {
         private val TEXT_DEBOUNCE = 300.milliseconds

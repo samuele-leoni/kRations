@@ -18,12 +18,18 @@ interface ProductDao {
             "WHERE p.deletedAt IS NULL " +
             "AND p.ownerUserId = :ownerUserId " +
             "AND (:categoryId IS NULL OR p.categoryId = :categoryId) " +
+            "AND (:noCategoryOnly = 0 OR p.categoryId IS NULL) " +
             "AND (:query = '' OR p.name LIKE '%' || :query || '%' ESCAPE '\\' " +
             "OR p.description LIKE '%' || :query || '%' ESCAPE '\\') " +
             "GROUP BY p.id " +
             "ORDER BY p.name COLLATE NOCASE ASC",
     )
-    fun searchProducts(query: String, categoryId: String?, ownerUserId: String): Flow<List<ProductWithStock>>
+    fun searchProducts(
+        query: String,
+        categoryId: String?,
+        noCategoryOnly: Boolean,
+        ownerUserId: String,
+    ): Flow<List<ProductWithStock>>
 
     @Query(
         "SELECT p.*, COALESCE(SUM(b.quantity), 0) AS totalQuantity " +

@@ -4,7 +4,11 @@ import com.example.krations.inventory.domain.model.Product
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRepository {
-    fun observeProducts(query: String, categoryId: String?): Flow<List<Product>>
+    fun observeProducts(
+        query: String,
+        categoryId: String?,
+        noCategoryOnly: Boolean = false,
+    ): Flow<List<Product>>
 
     suspend fun getProduct(id: String): Product?
 
@@ -15,7 +19,7 @@ interface ProductRepository {
         categoryId: String?,
         minQuantity: Double,
         expiryAlertDays: Int,
-    )
+    ): String
 
     suspend fun updateProduct(product: Product)
 
