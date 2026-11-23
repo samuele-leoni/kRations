@@ -2,6 +2,7 @@
 
 package com.example.krations.core.database
 
+import androidx.room3.AutoMigration
 import androidx.room3.ConstructedBy
 import androidx.room3.Database
 import androidx.room3.RoomDatabase
@@ -13,16 +14,17 @@ import com.example.krations.inventory.data.local.entity.CategoryEntity
 import com.example.krations.inventory.data.local.entity.InventoryBatchEntity
 import com.example.krations.inventory.data.local.entity.ProductEntity
 import com.example.krations.shoppinglist.data.local.dao.ShoppingListItemDao
-import com.example.krations.shoppinglist.data.local.entity.ShoppingListItem
+import com.example.krations.shoppinglist.data.local.entity.ShoppingListItemEntity
 
 @Database(
     entities = [
-        ShoppingListItem::class,
+        ShoppingListItemEntity::class,
         ProductEntity::class,
         CategoryEntity::class,
         InventoryBatchEntity::class,
     ],
     version = 3,
+    autoMigrations = [AutoMigration(from = 1, to = 2)],
 )
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {

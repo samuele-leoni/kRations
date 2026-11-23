@@ -3,8 +3,8 @@ package com.example.krations.shoppinglist.data.local.entity
 import androidx.room3.Entity
 import androidx.room3.PrimaryKey
 
-@Entity
-data class ShoppingListItem(
+@Entity(tableName = "ShoppingListItem")
+data class ShoppingListItemEntity(
     @PrimaryKey
     val id: String,
     // TODO add foreign key ref

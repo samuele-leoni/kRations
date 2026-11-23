@@ -83,6 +83,11 @@ kotlin {
             // Navigation
             implementation(libs.jetbrains.navigation3.ui)
 
+            // DateTime
+            implementation(libs.kotlinx.datetime)
+
+            // Logging
+            implementation(libs.kermit)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

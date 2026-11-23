@@ -4,6 +4,7 @@ import androidx.room3.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.example.krations.core.database.AppDatabase
 import com.example.krations.inventory.ui.InventoryViewModel
+import com.example.krations.shoppinglist.ui.ShoppingListViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.module.Module
@@ -26,7 +27,7 @@ val dataModule = module {
 
 val viewModelModule = module {
     viewModelOf(::InventoryViewModel)
-    //viewModelOf(::ShoppingListViewModel)
+    viewModelOf(::ShoppingListViewModel)
 }
 
 // Dipendenze specifiche per piattaforma
