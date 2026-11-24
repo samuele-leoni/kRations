@@ -1,3 +1,5 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -7,8 +9,19 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.ksp)                 // ← crea le configurazioni kspAndroid, kspIos…
     alias(libs.plugins.androidx.room3)      // ← plugin di Room 3 (schemi)
-    alias(libs.plugins.kotlinSerialization) //
+    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.buildKonfig)
 }
+
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    require(file.exists()) { "Create local.properties with SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY" }
+    file.inputStream().use(::load)
+}
+val supabaseUrl = localProperties.getProperty("SUPABASE_URL")?.trim().orEmpty()
+val supabasePublishableKey = localProperties.getProperty("SUPABASE_PUBLISHABLE_KEY")?.trim().orEmpty()
+require(supabaseUrl.isNotBlank()) { "SUPABASE_URL is missing from local.properties" }
+require(supabasePublishableKey.isNotBlank()) { "SUPABASE_PUBLISHABLE_KEY is missing from local.properties" }
 
 kotlin {
     listOf(
@@ -107,6 +120,14 @@ kotlin {
             implementation(libs.ktor.client.darwin)
         }
 
+    }
+}
+
+buildkonfig {
+    packageName = "com.example.krations.core.config"
+    defaultConfigs {
+        buildConfigField(STRING, "SUPABASE_URL", supabaseUrl)
+        buildConfigField(STRING, "SUPABASE_PUBLISHABLE_KEY", supabasePublishableKey)
     }
 }
 
