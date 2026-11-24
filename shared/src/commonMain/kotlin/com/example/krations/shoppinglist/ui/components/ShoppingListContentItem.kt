@@ -17,12 +17,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.composables.icons.materialicons.MaterialIcons
-import com.composables.icons.materialicons.rounded.Add
-import com.composables.icons.materialicons.rounded.Delete
-import com.composables.icons.materialicons.rounded.Remove
-import com.composables.icons.materialicons.rounded.Remove_shopping_cart
-import com.composables.icons.materialicons.rounded.Shopping_cart_checkout
+import com.composables.icons.materialsymbols.MaterialSymbols
+import com.composables.icons.materialsymbols.rounded.Add
+import com.composables.icons.materialsymbols.rounded.Delete
+import com.composables.icons.materialsymbols.rounded.Remove
+import com.composables.icons.materialsymbols.rounded.Remove_shopping_cart
+import com.composables.icons.materialsymbols.rounded.Shopping_cart_checkout
 import com.example.krations.core.ui.utils.formatQuantity
 import com.example.krations.shoppinglist.domain.model.ShoppingListItem
 
@@ -64,7 +64,7 @@ fun ShoppingListContentItem(
                         onClick = onDecrease
                     ) {
                         Icon(
-                            imageVector = MaterialIcons.Rounded.Remove,
+                            imageVector = MaterialSymbols.Rounded.Remove,
                             contentDescription = "Decrease quantity"
                         )
                     }
@@ -76,7 +76,7 @@ fun ShoppingListContentItem(
                         onClick = onIncrease
                     ) {
                         Icon(
-                            imageVector = MaterialIcons.Rounded.Add,
+                            imageVector = MaterialSymbols.Rounded.Add,
                             contentDescription = "Increase quantity"
                         )
                     }
@@ -87,7 +87,7 @@ fun ShoppingListContentItem(
                     onClick = onDelete
                 ) {
                     Icon(
-                        imageVector = MaterialIcons.Rounded.Delete,
+                        imageVector = MaterialSymbols.Rounded.Delete,
                         contentDescription = "Remove from shopping list"
                     )
                 }
@@ -96,7 +96,7 @@ fun ShoppingListContentItem(
                     onClick = onDelete
                 ) {
                     Icon(
-                        imageVector = MaterialIcons.Rounded.Remove_shopping_cart,
+                        imageVector = MaterialSymbols.Rounded.Remove_shopping_cart,
                         contentDescription = "Remove from shopping list"
                     )
                 }
@@ -104,7 +104,7 @@ fun ShoppingListContentItem(
                     onClick = onItemBought
                 ) {
                     Icon(
-                        imageVector = MaterialIcons.Rounded.Shopping_cart_checkout,
+                        imageVector = MaterialSymbols.Rounded.Shopping_cart_checkout,
                         contentDescription = "Set as bought"
                     )
                 }

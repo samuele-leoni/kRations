@@ -14,8 +14,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.composables.icons.materialicons.MaterialIcons
-import com.composables.icons.materialicons.rounded.Save
+import com.composables.icons.materialsymbols.MaterialSymbols
+import com.composables.icons.materialsymbols.rounded.Save
 import com.example.krations.core.ui.utils.formatQuantity
 import com.example.krations.shoppinglist.domain.model.ShoppingListItem
 
@@ -58,7 +58,7 @@ fun ShoppingListItemDetail(
             enabled = isValid,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Icon(MaterialIcons.Rounded.Save, contentDescription = null)
+            Icon(MaterialSymbols.Rounded.Save, contentDescription = null)
             Spacer(Modifier.width(8.dp))
             Text("Save")
         }

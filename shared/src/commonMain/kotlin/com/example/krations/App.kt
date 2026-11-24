@@ -1,14 +1,11 @@
 package com.example.krations
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
 import com.example.krations.alerts.domain.ExpiringItemsRepository
 import com.example.krations.alerts.domain.RescheduleExpirationRemindersUseCase
-import com.example.krations.shoppinglist.ui.ShoppingListScreen
+import com.example.krations.core.navigation.AppNavigation
 import com.mohamedrejeb.calf.permissions.ExperimentalPermissionsApi
 import com.mohamedrejeb.calf.permissions.Notification
 import com.mohamedrejeb.calf.permissions.Permission
@@ -37,8 +34,6 @@ fun App() {
     }
 
     MaterialTheme {
-        Scaffold { innerPadding ->
-            ShoppingListScreen(modifier = Modifier.padding(innerPadding))
-        }
+        AppNavigation()
     }
 }

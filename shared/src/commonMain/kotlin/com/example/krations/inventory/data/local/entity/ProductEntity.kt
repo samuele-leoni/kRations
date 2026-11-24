@@ -6,13 +6,17 @@ import androidx.room3.Index
 import androidx.room3.PrimaryKey
 
 @Entity(
-    indices = [Index("categoryId")],
+    indices = [
+        Index(value = ["categoryId", "ownerUserId"]),
+        Index(value = ["id", "ownerUserId"], unique = true),
+        Index(value = ["ownerUserId", "name"]),
+    ],
     foreignKeys = [
         ForeignKey(
             entity = CategoryEntity::class,
-            parentColumns = ["id"],
-            childColumns = ["categoryId"],
-            onDelete = ForeignKey.SET_NULL,
+            parentColumns = ["id", "ownerUserId"],
+            childColumns = ["categoryId", "ownerUserId"],
+            onDelete = ForeignKey.RESTRICT,
         ),
     ],
 )
@@ -26,7 +30,6 @@ data class ProductEntity(
     val description: String?,
     val iconName: String?,
     val unit: String = "unit",
-    val quantity: Double = 0.0,
     val minQuantity: Double = 0.0,
     val expiryAlertDays: Int = 7,
     val createdAt: String,

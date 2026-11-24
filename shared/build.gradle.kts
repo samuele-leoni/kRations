@@ -78,7 +78,10 @@ kotlin {
             implementation(libs.supabase.postgrest)
 
             // Icons
-            implementation(libs.icons.material.icons.rounded.cmp)
+            implementation(libs.icons.material.symbols.rounded.cmp)
+
+            // Navigation
+            implementation(libs.jetbrains.navigation3.ui)
 
             // DateTime
             implementation(libs.kotlinx.datetime)

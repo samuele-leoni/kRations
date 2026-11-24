@@ -8,6 +8,10 @@ import com.example.krations.alerts.domain.ExpirationNotifier
 import com.example.krations.alerts.domain.ExpiringItemsRepository
 import com.example.krations.alerts.domain.RescheduleExpirationRemindersUseCase
 import com.example.krations.core.database.AppDatabase
+import com.example.krations.inventory.ui.InventoryViewModel
+import com.example.krations.inventory.ui.category.CategoryEditViewModel
+import com.example.krations.inventory.ui.category.CategoryListViewModel
+import com.example.krations.inventory.ui.product.ProductEditViewModel
 import com.example.krations.shoppinglist.ui.ShoppingListViewModel
 import com.tweener.alarmee.createAlarmeeService
 import kotlinx.coroutines.Dispatchers
@@ -27,9 +31,14 @@ val dataModule = module {
     single { get<AppDatabase>().shoppingListItemDao() }
     single { get<AppDatabase>().productDao() }
     single { get<AppDatabase>().categoryDao() }
+    single { get<AppDatabase>().inventoryBatchDao() }
 }
 
 val viewModelModule = module {
+    viewModelOf(::InventoryViewModel)
+    viewModelOf(::ProductEditViewModel)
+    viewModelOf(::CategoryListViewModel)
+    viewModelOf(::CategoryEditViewModel)
     viewModelOf(::ShoppingListViewModel)
 }
 
