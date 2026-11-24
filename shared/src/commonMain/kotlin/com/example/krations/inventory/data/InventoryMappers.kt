@@ -1,9 +1,11 @@
 package com.example.krations.inventory.data
 
 import com.example.krations.inventory.data.local.entity.CategoryEntity
+import com.example.krations.inventory.data.local.entity.CategoryWithCount
 import com.example.krations.inventory.data.local.entity.InventoryBatchEntity
 import com.example.krations.inventory.data.local.entity.ProductWithStock
 import com.example.krations.inventory.domain.model.Category
+import com.example.krations.inventory.domain.model.CategorySummary
 import com.example.krations.inventory.domain.model.InventoryBatch
 import com.example.krations.inventory.domain.model.Product
 
@@ -24,6 +26,12 @@ fun CategoryEntity.toCategory(): Category = Category(
     name = name,
     iconName = iconName,
 )
+
+fun CategoryWithCount.toSummary(): CategorySummary =
+    CategorySummary(
+        category = category.toCategory(),
+        productCount = productCount.toInt(),
+    )
 
 fun InventoryBatchEntity.toBatch(): InventoryBatch = InventoryBatch(
     id = id,

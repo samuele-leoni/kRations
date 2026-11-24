@@ -3,9 +3,11 @@ package com.example.krations.inventory.data
 import com.example.krations.core.data.LOCAL_USER_ID
 import com.example.krations.inventory.data.local.dao.CategoryDao
 import com.example.krations.inventory.data.local.entity.CategoryEntity
+import com.example.krations.inventory.data.local.entity.CategoryWithCount
 import com.example.krations.inventory.domain.CategoryRepository
 import com.example.krations.inventory.domain.DeleteCategoryResult
 import com.example.krations.inventory.domain.model.Category
+import com.example.krations.inventory.domain.model.CategorySummary
 import kotlin.time.Clock.System.now
 import kotlin.uuid.Uuid
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +19,12 @@ class CategoryRepositoryImpl(
 
     override fun observeCategories(): Flow<List<Category>> =
         categoryDao.getCategories(LOCAL_USER_ID).map { rows -> rows.map(CategoryEntity::toCategory) }
+
+    override fun observeCategoriesWithCount(): Flow<List<CategorySummary>> =
+        categoryDao.getCategoriesWithCount(LOCAL_USER_ID).map { rows -> rows.map(CategoryWithCount::toSummary) }
+
+    override suspend fun getCategory(id: String): Category? =
+        categoryDao.getCategoryById(id, LOCAL_USER_ID)?.toCategory()
 
     override suspend fun addCategory(name: String, iconName: String) =
         now().toString().let { timestamp ->
@@ -45,16 +53,15 @@ class CategoryRepositoryImpl(
     }
 
     override suspend fun deleteCategory(id: String): DeleteCategoryResult {
-        val attached = categoryDao.countActiveProducts(id, LOCAL_USER_ID)
-        if (attached > 0) return DeleteCategoryResult.Blocked(attached)
+        val attached = categoryDao.softDeleteIfUnused(
+            deletedAt = now().toString(),
+            id = id,
+            ownerUserId = LOCAL_USER_ID,
+        )
 
-        return now().toString().let { timestamp ->
-            categoryDao.deleteCategory(
-                deletedAt = timestamp,
-                updatedAt = timestamp,
-                id = id,
-                ownerUserId = LOCAL_USER_ID,
-            )
+        return if (attached > 0) {
+            DeleteCategoryResult.Blocked(attached)
+        } else {
             DeleteCategoryResult.Deleted
         }
     }
