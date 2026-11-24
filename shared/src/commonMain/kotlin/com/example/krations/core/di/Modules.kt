@@ -2,15 +2,22 @@ package com.example.krations.core.di
 
 import androidx.room3.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.example.krations.alerts.data.AlarmeeExpirationNotifier
+import com.example.krations.alerts.data.FakeExpiringItemsRepository
+import com.example.krations.alerts.domain.ExpirationNotifier
+import com.example.krations.alerts.domain.ExpiringItemsRepository
+import com.example.krations.alerts.domain.RescheduleExpirationRemindersUseCase
 import com.example.krations.core.database.AppDatabase
 import com.example.krations.inventory.ui.InventoryViewModel
 import com.example.krations.inventory.ui.category.CategoryEditViewModel
 import com.example.krations.inventory.ui.category.CategoryListViewModel
 import com.example.krations.inventory.ui.product.ProductEditViewModel
 import com.example.krations.shoppinglist.ui.ShoppingListViewModel
+import com.tweener.alarmee.createAlarmeeService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -35,5 +42,12 @@ val viewModelModule = module {
     viewModelOf(::ShoppingListViewModel)
 }
 
-// Dipendenze specifiche per piattaforma
+val alertsModule = module {
+    single { createAlarmeeService().apply { initialize(get()) } }
+    single<ExpiringItemsRepository> { FakeExpiringItemsRepository() }
+    single<ExpirationNotifier> { AlarmeeExpirationNotifier(get()) }
+    factoryOf(::RescheduleExpirationRemindersUseCase)
+}
+
+// Platform specific dependencies
 expect val platformModule: Module

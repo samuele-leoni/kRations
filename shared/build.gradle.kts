@@ -88,6 +88,13 @@ kotlin {
 
             // Logging
             implementation(libs.kermit)
+
+            // Notifications
+            implementation(libs.alarmee)
+
+            // Permissions
+            implementation(libs.calf.permissions.core)
+            implementation(libs.calf.permissions.notifications)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

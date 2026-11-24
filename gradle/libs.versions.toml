@@ -25,6 +25,8 @@ supabase = "3.9.0"
 ktor = "3.6.1"
 kotlinx-datetime = "0.8.0"
 kermit = "2.2.0"
+alarmee = "2.7.2"
+calf = "0.14.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -65,6 +67,14 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+
+# Notifications
+alarmee = { group = "io.github.tweener", name = "alarmee", version.ref = "alarmee" }        # For local notifications only
+# alarmee = { group = "io.github.tweener", name = "alarmee-push", version.ref = "alarmee" }   # For both local & push notifications
+
+# Permissions
+calf-permissions-core = { module = "com.mohamedrejeb.calf:calf-permissions-core", version.ref = "calf" }
+calf-permissions-notifications = { module = "com.mohamedrejeb.calf:calf-permissions-notifications", version.ref = "calf" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -8,6 +8,6 @@ import org.koin.dsl.KoinAppDeclaration
 fun initKoin(config: KoinAppDeclaration? = null) {
     startKoin {
         config?.invoke(this)
-        modules(dataModule, viewModelModule, platformModule, inventoryModule, shoppingListModule)
+        modules(dataModule, viewModelModule, platformModule, inventoryModule, shoppingListModule, alertsModule)
     }
 }
