@@ -2,9 +2,11 @@ package com.example.krations.inventory.ui.category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.krations.core.state.STOP_TIMEOUT
 import com.example.krations.inventory.domain.CategoryRepository
 import com.example.krations.inventory.domain.DeleteCategoryResult
 import com.example.krations.inventory.domain.model.CategorySummary
+import com.example.krations.inventory.ui.common.productCountLabel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -41,12 +43,6 @@ class CategoryListViewModel(
             }
         }
     }
-
     private fun CategorySummary.nameOf(result: DeleteCategoryResult.Blocked): String =
-        "${category.name} still has ${result.productCount} " +
-            "${if (result.productCount == 1) "product" else "products"} in it."
-
-    companion object {
-        private const val STOP_TIMEOUT = 5_000L
-    }
+        "${category.name} still has ${productCountLabel(result.productCount)} in it."
 }

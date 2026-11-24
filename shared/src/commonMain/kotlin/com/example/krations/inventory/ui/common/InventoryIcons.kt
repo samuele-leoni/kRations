@@ -23,53 +23,36 @@ import com.composables.icons.materialsymbols.rounded.Soap
 import com.composables.icons.materialsymbols.rounded.Water_drop
 import com.composables.icons.materialsymbols.rounded.Wine_bar
 
-val defaultIconName: String = "inventory_2"
+const val defaultIconName: String = "inventory_2"
 
-val selectableIconNames: List<String> = listOf(
-    "inventory_2",
-    "package",
-    "grocery",
-    "shelves",
-    "kitchen",
-    "coffee_maker",
-    "water_drop",
-    "wine_bar",
-    "rice_bowl",
-    "bakery_dining",
-    "egg",
-    "icecream",
-    "fastfood",
-    "household_supplies",
-    "cleaning_services",
-    "laundry",
-    "soap",
-    "pill",
-    "medication",
-    "pet_supplies",
+// Categories store an icon by name, so this map is both the set a user can choose from and the set
+// that can be rendered: a name that is not here falls back to defaultIconName.
+private val inventoryIcons: Map<String, ImageVector> = mapOf(
+    "inventory_2" to MaterialSymbols.Rounded.Inventory_2,
+    "package" to MaterialSymbols.Rounded.Package,
+    "grocery" to MaterialSymbols.Rounded.Grocery,
+    "shelves" to MaterialSymbols.Rounded.Shelves,
+    "kitchen" to MaterialSymbols.Rounded.Kitchen,
+    "coffee_maker" to MaterialSymbols.Rounded.Coffee_maker,
+    "water_drop" to MaterialSymbols.Rounded.Water_drop,
+    "wine_bar" to MaterialSymbols.Rounded.Wine_bar,
+    "rice_bowl" to MaterialSymbols.Rounded.Rice_bowl,
+    "bakery_dining" to MaterialSymbols.Rounded.Bakery_dining,
+    "egg" to MaterialSymbols.Rounded.Egg,
+    "icecream" to MaterialSymbols.Rounded.Icecream,
+    "fastfood" to MaterialSymbols.Rounded.Fastfood,
+    "household_supplies" to MaterialSymbols.Rounded.Household_supplies,
+    "cleaning_services" to MaterialSymbols.Rounded.Cleaning_services,
+    "laundry" to MaterialSymbols.Rounded.Laundry,
+    "soap" to MaterialSymbols.Rounded.Soap,
+    "pill" to MaterialSymbols.Rounded.Pill,
+    "medication" to MaterialSymbols.Rounded.Medication,
+    "pet_supplies" to MaterialSymbols.Rounded.Pet_supplies,
 )
 
-fun inventoryIcon(iconName: String?): ImageVector = when (iconName) {
-    "package" -> MaterialSymbols.Rounded.Package
-    "grocery" -> MaterialSymbols.Rounded.Grocery
-    "household_supplies" -> MaterialSymbols.Rounded.Household_supplies
-    "shelves" -> MaterialSymbols.Rounded.Shelves
-    "kitchen" -> MaterialSymbols.Rounded.Kitchen
-    "coffee_maker" -> MaterialSymbols.Rounded.Coffee_maker
-    "water_drop" -> MaterialSymbols.Rounded.Water_drop
-    "wine_bar" -> MaterialSymbols.Rounded.Wine_bar
-    "rice_bowl" -> MaterialSymbols.Rounded.Rice_bowl
-    "bakery_dining" -> MaterialSymbols.Rounded.Bakery_dining
-    "egg" -> MaterialSymbols.Rounded.Egg
-    "icecream" -> MaterialSymbols.Rounded.Icecream
-    "fastfood" -> MaterialSymbols.Rounded.Fastfood
-    "cleaning_services" -> MaterialSymbols.Rounded.Cleaning_services
-    "laundry" -> MaterialSymbols.Rounded.Laundry
-    "soap" -> MaterialSymbols.Rounded.Soap
-    "pill" -> MaterialSymbols.Rounded.Pill
-    "medication" -> MaterialSymbols.Rounded.Medication
-    "pet_supplies" -> MaterialSymbols.Rounded.Pet_supplies
-    else -> MaterialSymbols.Rounded.Inventory_2
-}
+val selectableIconNames: List<String> = inventoryIcons.keys.toList()
+
+fun inventoryIcon(iconName: String?): ImageVector = inventoryIcons[iconName] ?: inventoryIcons.getValue(defaultIconName)
 
 fun iconLabel(iconName: String): String =
     iconName.split('_').joinToString(separator = " ") { part -> part.replaceFirstChar(Char::uppercaseChar) }

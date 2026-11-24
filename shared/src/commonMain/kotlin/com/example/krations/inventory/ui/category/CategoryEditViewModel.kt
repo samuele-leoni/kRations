@@ -2,6 +2,7 @@ package com.example.krations.inventory.ui.category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.krations.core.state.STOP_TIMEOUT
 import com.example.krations.inventory.domain.CategoryRepository
 import com.example.krations.inventory.domain.DeleteCategoryResult
 import com.example.krations.inventory.domain.model.Category
@@ -93,9 +94,5 @@ class CategoryEditViewModel(
                     draft.value = draft.value.copy(deleteBlockedCount = result.productCount)
             }
         }
-    }
-
-    companion object {
-        private const val STOP_TIMEOUT = 5_000L
     }
 }

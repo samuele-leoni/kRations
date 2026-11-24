@@ -1,6 +1,5 @@
 package com.example.krations.inventory.ui.category
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -38,12 +36,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composables.icons.materialsymbols.MaterialSymbols
 import com.composables.icons.materialsymbols.rounded.Add
-import com.composables.icons.materialsymbols.rounded.Close
 import com.composables.icons.materialsymbols.rounded.Delete
 import com.example.krations.inventory.domain.model.Category
 import com.example.krations.inventory.domain.model.CategorySummary
 import com.example.krations.inventory.ui.common.EditHeader
+import com.example.krations.inventory.ui.common.NoticeBanner
 import com.example.krations.inventory.ui.common.inventoryIcon
+import com.example.krations.inventory.ui.common.productCountLabel
 
 @Composable
 @Preview(name = "Category list", showBackground = true)
@@ -66,31 +65,10 @@ fun CategoryListContent(
 
     Box(modifier = modifier.fillMaxSize().safeContentPadding().imePadding()) {
         Column(modifier = Modifier.fillMaxSize()) {
-            EditHeader(title = "Categories", canDelete = false, onBack = onBack, onDelete = {})
+            EditHeader(title = "Categories", canDelete = false, onBack = onBack)
 
             uiState.notice?.let { message ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.errorContainer,
-                            shape = RoundedCornerShape(16.dp),
-                        )
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Text(
-                        text = message,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        modifier = Modifier.weight(1f),
-                    )
-                    IconButton(onClick = onNoticeDismissed) {
-                        Icon(MaterialSymbols.Rounded.Close, contentDescription = "Dismiss")
-                    }
-                }
+                NoticeBanner(message = message, onDismiss = onNoticeDismissed)
             }
 
             if (uiState.categories.isEmpty()) {
@@ -176,7 +154,7 @@ private fun CategoryCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = summary.category.name, style = MaterialTheme.typography.titleLarge)
                 Text(
-                    text = "(${summary.productCount} ${if (summary.productCount == 1) "product" else "products"})",
+                    text = "(${productCountLabel(summary.productCount)})",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

@@ -11,7 +11,7 @@ interface CategoryRepository {
 
     suspend fun getCategory(id: String): Category?
 
-    suspend fun addCategory(name: String, iconName: String = "inventory_2")
+    suspend fun addCategory(name: String, iconName: String)
 
     suspend fun updateCategory(category: Category)
 

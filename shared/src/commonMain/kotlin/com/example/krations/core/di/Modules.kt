@@ -19,12 +19,6 @@ val dataModule = module {
         get<RoomDatabase.Builder<AppDatabase>>()
             .setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
-            // The app is still in development and every local row is test data, so dropping and
-            // rebuilding the tables is acceptable when the schema changes. Before the first release
-            // this has to become a real migration: version 2 -> 3 drops ProductEntity.quantity,
-            // makes CategoryEntity.iconName not null and turns the category foreign key into a
-            // composite one, so a destructive migration would silently wipe user data.
-            .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
     }
     single { get<AppDatabase>().shoppingListItemDao() }

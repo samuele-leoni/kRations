@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,7 +18,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -46,9 +44,11 @@ import com.composables.icons.materialsymbols.rounded.Search
 import com.example.krations.inventory.ui.common.EditField
 import com.example.krations.inventory.ui.common.EditHeader
 import com.example.krations.inventory.ui.common.EditablePillValue
+import com.example.krations.inventory.ui.common.NoticeBanner
 import com.example.krations.inventory.ui.common.Pill
 import com.example.krations.inventory.ui.common.iconLabel
 import com.example.krations.inventory.ui.common.inventoryIcon
+import com.example.krations.inventory.ui.common.productCountLabel
 import com.example.krations.inventory.ui.common.selectableIconNames
 
 @Composable
@@ -82,28 +82,10 @@ fun CategoryEditContent(
             )
 
             uiState.deleteBlockedCount?.let { count ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.errorContainer,
-                            shape = RoundedCornerShape(16.dp),
-                        )
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Text(
-                        text = "Move or delete its $count ${if (count == 1) "product" else "products"} first.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        modifier = Modifier.weight(1f),
-                    )
-                    Button(onClick = onBlockedMessageDismissed) {
-                        Text("OK")
-                    }
-                }
+                NoticeBanner(
+                    message = "Move or delete its ${productCountLabel(count)} first.",
+                    onDismiss = onBlockedMessageDismissed,
+                )
             }
 
             EditField(label = "Name") {

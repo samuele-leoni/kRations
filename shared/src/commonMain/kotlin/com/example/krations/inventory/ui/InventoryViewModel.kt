@@ -2,6 +2,7 @@ package com.example.krations.inventory.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.krations.core.state.STOP_TIMEOUT
 import com.example.krations.inventory.domain.CategoryRepository
 import com.example.krations.inventory.domain.ProductRepository
 import com.example.krations.inventory.ui.state.InventoryUiState
@@ -83,6 +84,5 @@ class InventoryViewModel(
 
     companion object {
         private val TEXT_DEBOUNCE = 300.milliseconds
-        private const val STOP_TIMEOUT = 5_000L
     }
 }

@@ -2,6 +2,7 @@ package com.example.krations.inventory.ui.product
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.krations.core.state.STOP_TIMEOUT
 import com.example.krations.inventory.domain.CategoryRepository
 import com.example.krations.inventory.domain.InventoryBatchRepository
 import com.example.krations.inventory.domain.ProductRepository
@@ -179,8 +180,4 @@ class ProductEditViewModel(
 
     private fun InventoryBatch.asDraft(): BatchDraft =
         BatchDraft(batchId = id, quantity = quantity.toInt(), expirationDate = expirationDate)
-
-    companion object {
-        private const val STOP_TIMEOUT = 5_000L
-    }
 }

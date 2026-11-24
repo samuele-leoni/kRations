@@ -32,7 +32,7 @@ fun EditHeader(
     title: String,
     canDelete: Boolean,
     onBack: () -> Unit,
-    onDelete: () -> Unit,
+    onDelete: () -> Unit = {},
     deleteContentDescription: String = "Delete",
 ) {
     Row(
