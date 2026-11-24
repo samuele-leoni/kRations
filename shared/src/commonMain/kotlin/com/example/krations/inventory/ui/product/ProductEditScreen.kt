@@ -12,6 +12,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun ProductEditScreen(
     productId: String?,
+    onCreateCategory: () -> Unit,
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ProductEditViewModel = koinViewModel(),
@@ -34,6 +35,7 @@ fun ProductEditScreen(
             onNameChange = viewModel::onNameChange,
             onUnitChange = viewModel::onUnitChange,
             onCategoryChange = viewModel::onCategoryChange,
+            onCreateCategory = onCreateCategory,
             onMinQuantityChange = viewModel::onMinQuantityChange,
             onExpiryAlertDaysChange = viewModel::onExpiryAlertDaysChange,
             onAddBatch = viewModel::addBatch,

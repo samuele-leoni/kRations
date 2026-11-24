@@ -4,6 +4,8 @@ import androidx.room3.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.example.krations.core.database.AppDatabase
 import com.example.krations.inventory.ui.InventoryViewModel
+import com.example.krations.inventory.ui.category.CategoryEditViewModel
+import com.example.krations.inventory.ui.category.CategoryListViewModel
 import com.example.krations.inventory.ui.product.ProductEditViewModel
 import com.example.krations.shoppinglist.ui.ShoppingListViewModel
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +36,8 @@ val dataModule = module {
 val viewModelModule = module {
     viewModelOf(::InventoryViewModel)
     viewModelOf(::ProductEditViewModel)
+    viewModelOf(::CategoryListViewModel)
+    viewModelOf(::CategoryEditViewModel)
     viewModelOf(::ShoppingListViewModel)
 }
 

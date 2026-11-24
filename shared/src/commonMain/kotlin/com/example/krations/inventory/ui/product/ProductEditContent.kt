@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -59,6 +58,11 @@ import com.composables.icons.materialsymbols.rounded.Arrow_drop_down
 import com.composables.icons.materialsymbols.rounded.Delete
 import com.composables.icons.materialsymbols.rounded.Remove
 import com.example.krations.inventory.domain.model.Category
+import com.example.krations.inventory.ui.common.EditField
+import com.example.krations.inventory.ui.common.EditHeader
+import com.example.krations.inventory.ui.common.EditablePillValue
+import com.example.krations.inventory.ui.common.Pill
+import com.example.krations.inventory.ui.common.SelectPill
 import kotlinx.datetime.LocalDate
 
 @Composable
@@ -77,6 +81,7 @@ fun ProductEditContent(
     onNameChange: (String) -> Unit = {},
     onUnitChange: (String) -> Unit = {},
     onCategoryChange: (String?) -> Unit = {},
+    onCreateCategory: () -> Unit = {},
     onMinQuantityChange: (Double) -> Unit = {},
     onExpiryAlertDaysChange: (Int) -> Unit = {},
     onAddBatch: () -> Unit = {},
@@ -108,6 +113,7 @@ fun ProductEditContent(
                     EditablePillValue(
                         value = uiState.name,
                         onValueChange = onNameChange,
+                        placeholder = "Product name",
                     )
                 }
             }
@@ -161,6 +167,7 @@ fun ProductEditContent(
             CATEGORY_PICKER -> buildList {
                 add("No category" to null)
                 uiState.categories.forEach { add(it.name to it.id) }
+                add("New category" to NEW_CATEGORY)
             }
 
             else -> productUnits.map { it to it }
@@ -171,7 +178,13 @@ fun ProductEditContent(
             options = options,
             onDismiss = { openedPicker = null },
             onSelect = { value ->
-                if (which == CATEGORY_PICKER) onCategoryChange(value) else value?.let(onUnitChange)
+                when {
+                    value == NEW_CATEGORY -> onCreateCategory()
+
+                    which == CATEGORY_PICKER -> onCategoryChange(value)
+
+                    else -> value?.let(onUnitChange)
+                }
                 openedPicker = null
             },
         )
@@ -210,64 +223,6 @@ fun ProductEditContent(
                 OutlinedButton(onClick = { showDeleteDialog = false }) { Text("Cancel") }
             },
         )
-    }
-}
-
-@Composable
-private fun EditHeader(
-    title: String,
-    canDelete: Boolean,
-    onBack: () -> Unit,
-    onDelete: () -> Unit,
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        IconButton(onClick = onBack) {
-            Icon(MaterialSymbols.Rounded.Arrow_back, contentDescription = "Back")
-        }
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-        )
-        if (canDelete) {
-            IconButton(onClick = onDelete) {
-                Icon(MaterialSymbols.Rounded.Delete, contentDescription = "Delete product")
-            }
-        } else {
-            Box(modifier = Modifier.size(48.dp))
-        }
-    }
-}
-
-@Composable
-private fun EditField(
-    label: String,
-    value: @Composable () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp)
-            .background(
-                color = MaterialTheme.colorScheme.surfaceContainer,
-                shape = RoundedCornerShape(20.dp),
-            )
-            .padding(horizontal = 20.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.weight(1f),
-        )
-        Box(modifier = Modifier.weight(1.1f), contentAlignment = Alignment.CenterEnd) {
-            value()
-        }
     }
 }
 
@@ -369,77 +324,6 @@ private fun BatchesSection(
         ),
     ) {
         Text("Add New Batch")
-    }
-}
-
-@Composable
-private fun Pill(
-    modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-    content: @Composable () -> Unit,
-) {
-    Box(
-        modifier = modifier
-            .background(
-                color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                shape = RoundedCornerShape(12.dp),
-            )
-            .padding(contentPadding),
-        contentAlignment = Alignment.Center,
-    ) {
-        content()
-    }
-}
-
-@Composable
-private fun EditablePillValue(
-    value: String,
-    onValueChange: (String) -> Unit,
-) {
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = Modifier.fillMaxWidth(),
-        textStyle = TextStyle(
-            color = MaterialTheme.colorScheme.onSurface,
-            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-        ),
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
-        decorationBox = { inner ->
-            if (value.isEmpty()) {
-                Text(
-                    text = "Product name",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            inner()
-        },
-    )
-}
-
-@Composable
-private fun SelectPill(
-    text: String,
-    onClick: () -> Unit,
-) {
-    Pill(modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f),
-                maxLines = 1,
-            )
-            Icon(
-                imageVector = MaterialSymbols.Rounded.Arrow_drop_down,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-            )
-        }
     }
 }
 
@@ -572,3 +456,6 @@ private const val MAX_MIN_QUANTITY = 50f
 private const val MILLIS_PER_DAY = 86_400_000L
 private const val CATEGORY_PICKER = "category"
 private const val UNIT_PICKER = "unit"
+
+// Not a category id: it is the row that leaves the picker and opens the editor instead.
+private const val NEW_CATEGORY = "new-category"

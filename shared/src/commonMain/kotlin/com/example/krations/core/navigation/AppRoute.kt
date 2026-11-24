@@ -10,4 +10,10 @@ sealed interface AppRoute : NavKey {
     data object AddProduct : AppRoute
 
     data class EditProduct(val productId: String) : AppRoute
+
+    data object Categories : AppRoute
+
+    data object NewCategory : AppRoute
+
+    data class EditCategory(val categoryId: String) : AppRoute
 }

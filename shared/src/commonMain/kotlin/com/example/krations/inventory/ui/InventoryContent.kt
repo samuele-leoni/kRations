@@ -34,23 +34,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.composables.icons.materialsymbols.MaterialSymbols
 import com.composables.icons.materialsymbols.rounded.Add
 import com.composables.icons.materialsymbols.rounded.Check
-import com.composables.icons.materialsymbols.rounded.Household_supplies
 import com.composables.icons.materialsymbols.rounded.Close
-import com.composables.icons.materialsymbols.rounded.Coffee_maker
 import com.composables.icons.materialsymbols.rounded.Inventory_2
-import com.composables.icons.materialsymbols.rounded.Kitchen
-import com.composables.icons.materialsymbols.rounded.Grocery
-import com.composables.icons.materialsymbols.rounded.Pill
 import com.composables.icons.materialsymbols.rounded.Search
-import com.composables.icons.materialsymbols.rounded.Shelves
 import com.example.krations.inventory.domain.model.Category
 import com.example.krations.inventory.domain.model.Product
+import com.example.krations.inventory.ui.common.inventoryIcon
 import com.example.krations.inventory.ui.state.InventoryUiState
 
 @Composable
@@ -62,6 +56,7 @@ fun InventoryContent(
     onFiltersCleared: () -> Unit,
     onAddProduct: () -> Unit,
     onEditProduct: (String) -> Unit,
+    onManageCategories: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize().safeContentPadding().imePadding()) {
@@ -75,6 +70,7 @@ fun InventoryContent(
                 onCategoryToggled = onCategoryToggled,
                 onUncategorizedToggled = onUncategorizedToggled,
                 onFiltersCleared = onFiltersCleared,
+                onManageCategories = onManageCategories,
             )
 
             if (uiState.products.isEmpty()) {
@@ -134,6 +130,7 @@ private fun CategoryChipsRow(
     onCategoryToggled: (String) -> Unit,
     onUncategorizedToggled: () -> Unit,
     onFiltersCleared: () -> Unit,
+    onManageCategories: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -151,7 +148,7 @@ private fun CategoryChipsRow(
             FilterChip(
                 selected = category.id in selectedCategoryIds,
                 onClick = { onCategoryToggled(category.id) },
-                leadingIcon = { Icon(icon(category.iconName), contentDescription = null) },
+                leadingIcon = { Icon(inventoryIcon(category.iconName), contentDescription = null) },
                 label = { Text(category.name) },
                 shape = CircleShape,
                 colors = FilterChipDefaults.filterChipColors(
@@ -166,6 +163,19 @@ private fun CategoryChipsRow(
             onClick = onUncategorizedToggled,
             leadingIcon = { Icon(MaterialSymbols.Rounded.Inventory_2, contentDescription = null) },
             label = { Text("No category") },
+            shape = CircleShape,
+            colors = FilterChipDefaults.filterChipColors(
+                labelColor = Color.DarkGray,
+                iconColor = Color.DarkGray
+            ),
+        )
+
+        // Opens the category screens instead of filtering, so it never carries a selected state.
+        FilterChip(
+            selected = false,
+            onClick = onManageCategories,
+            leadingIcon = { Icon(MaterialSymbols.Rounded.Add, contentDescription = "Manage categories") },
+            label = { Text("Category") },
             shape = CircleShape,
             colors = FilterChipDefaults.filterChipColors(
                 labelColor = Color.DarkGray,
@@ -191,7 +201,7 @@ private fun ProductCard(product: Product, onClick: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Icon(
-                imageVector = icon(product.iconName),
+                imageVector = inventoryIcon(product.iconName),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.size(32.dp),
@@ -256,16 +266,6 @@ private fun AddProductButton(onClick: () -> Unit, modifier: Modifier = Modifier)
     }
 }
 
-private fun icon(iconName: String?): ImageVector = when (iconName) {
-    "pill" -> MaterialSymbols.Rounded.Pill
-    "grocery" -> MaterialSymbols.Rounded.Grocery
-    "household_supplies" -> MaterialSymbols.Rounded.Household_supplies
-    "shelves" -> MaterialSymbols.Rounded.Shelves
-    "kitchen" -> MaterialSymbols.Rounded.Kitchen
-    "coffee_maker" -> MaterialSymbols.Rounded.Coffee_maker
-    else -> MaterialSymbols.Rounded.Inventory_2
-}
-
 private enum class StockStatus(val label: String) {
     InStock("In Stock"),
     LowStock("Low\nStock"),
@@ -305,6 +305,7 @@ private fun PreviewInventory(products: List<Product>, query: String) {
             onFiltersCleared = {},
             onAddProduct = {},
             onEditProduct = {},
+            onManageCategories = {},
         )
     }
 }

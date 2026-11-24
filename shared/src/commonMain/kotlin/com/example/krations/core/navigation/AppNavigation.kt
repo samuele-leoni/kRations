@@ -6,6 +6,8 @@ import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.example.krations.inventory.ui.InventoryScreen
+import com.example.krations.inventory.ui.category.CategoryEditScreen
+import com.example.krations.inventory.ui.category.CategoryListScreen
 import com.example.krations.inventory.ui.product.ProductEditScreen
 import com.example.krations.shoppinglist.ui.ShoppingListScreen
 
@@ -22,12 +24,14 @@ fun AppNavigation() {
                     InventoryScreen(
                         onAddProduct = { backStack.add(AppRoute.AddProduct) },
                         onEditProduct = { productId -> backStack.add(AppRoute.EditProduct(productId)) },
+                        onManageCategories = { backStack.add(AppRoute.Categories) },
                     )
                 }
 
                 is AppRoute.AddProduct -> NavEntry(key) {
                     ProductEditScreen(
                         productId = null,
+                        onCreateCategory = { backStack.add(AppRoute.NewCategory) },
                         onDone = { backStack.removeLastOrNull() },
                     )
                 }
@@ -35,6 +39,29 @@ fun AppNavigation() {
                 is AppRoute.EditProduct -> NavEntry(key) {
                     ProductEditScreen(
                         productId = key.productId,
+                        onCreateCategory = { backStack.add(AppRoute.NewCategory) },
+                        onDone = { backStack.removeLastOrNull() },
+                    )
+                }
+
+                is AppRoute.Categories -> NavEntry(key) {
+                    CategoryListScreen(
+                        onBack = { backStack.removeLastOrNull() },
+                        onNewCategory = { backStack.add(AppRoute.NewCategory) },
+                        onEditCategory = { categoryId -> backStack.add(AppRoute.EditCategory(categoryId)) },
+                    )
+                }
+
+                is AppRoute.NewCategory -> NavEntry(key) {
+                    CategoryEditScreen(
+                        categoryId = null,
+                        onDone = { backStack.removeLastOrNull() },
+                    )
+                }
+
+                is AppRoute.EditCategory -> NavEntry(key) {
+                    CategoryEditScreen(
+                        categoryId = key.categoryId,
                         onDone = { backStack.removeLastOrNull() },
                     )
                 }
