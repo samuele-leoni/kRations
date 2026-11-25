@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,20 +30,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.krations.core.navigation.AppNavigation
 import com.example.krations.core.navigation.AppRoute
+import com.example.krations.core.navigation.NavSection
+import com.example.krations.core.navigation.ui.AppFooter
 import com.example.krations.profile.ui.ProfileIcon
 import com.example.krations.shoppinglist.ui.ShoppingListScreen
 
 private val AppBackground = Color(0xFFFFF8FF)
 private val Ink = Color(0xFF211F26)
 
-private enum class HomeTab {
-    Inventory,
-    ShoppingList,
-}
-
 @Composable
 fun HomeScreen(email: String?, onProfileClick: () -> Unit) {
-    var selectedTab by rememberSaveable { mutableStateOf(HomeTab.Inventory) }
+    var selectedSection by rememberSaveable { mutableStateOf(NavSection.Inventory) }
     val inventoryBackStack = remember { mutableStateListOf<AppRoute>(AppRoute.Inventory) }
 
     Scaffold(
@@ -53,20 +48,10 @@ fun HomeScreen(email: String?, onProfileClick: () -> Unit) {
         containerColor = AppBackground,
         contentWindowInsets = WindowInsets.safeDrawing,
         bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    selected = selectedTab == HomeTab.Inventory,
-                    onClick = { selectedTab = HomeTab.Inventory },
-                    icon = {},
-                    label = { Text("Inventory") },
-                )
-                NavigationBarItem(
-                    selected = selectedTab == HomeTab.ShoppingList,
-                    onClick = { selectedTab = HomeTab.ShoppingList },
-                    icon = {},
-                    label = { Text("Shopping list") },
-                )
-            }
+            AppFooter(
+                selected = selectedSection,
+                onSelect = { selectedSection = it },
+            )
         },
     ) { innerPadding ->
         Column(
@@ -101,12 +86,16 @@ fun HomeScreen(email: String?, onProfileClick: () -> Unit) {
                 }
             }
 
-            when (selectedTab) {
-                HomeTab.Inventory -> AppNavigation(
+            when (selectedSection) {
+                NavSection.Home -> {
+                }
+
+                NavSection.Inventory -> AppNavigation(
                     backStack = inventoryBackStack,
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                 )
-                HomeTab.ShoppingList -> ShoppingListScreen(
+
+                NavSection.ShoppingList -> ShoppingListScreen(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                 )
             }
