@@ -11,3 +11,6 @@ fun Product.stockStatus(): StockStatus = when {
     stock < minQuantity -> StockStatus.LowStock
     else -> StockStatus.InStock
 }
+
+val StockStatus.needsRestock: Boolean
+    get() = this != StockStatus.InStock

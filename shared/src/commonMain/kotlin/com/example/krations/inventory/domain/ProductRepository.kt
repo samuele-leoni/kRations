@@ -10,6 +10,8 @@ interface ProductRepository {
         includeUncategorized: Boolean,
     ): Flow<List<Product>>
 
+    fun observeAllProducts(): Flow<List<Product>>
+
     suspend fun getProduct(id: String): Product?
 
     suspend fun addProduct(
