@@ -15,12 +15,12 @@ class AlarmeeLowStockNotifier(
     private val alarmeeService: AlarmeeService,
 ) : LowStockNotifier {
 
-    override fun schedule(item: LowStockItem, reminderDate: LocalDateTime) {
+    override fun schedule(items: List<LowStockItem>, reminderDate: LocalDateTime) {
         alarmeeService.local.schedule(
             alarmee = Alarmee(
-                uuid = item.productId,
+                uuid = DIGEST_UUID,
                 notificationTitle = "Low stock",
-                notificationBody = "${item.productName}: ${item.stock.formatQuantity()} ${item.unit} left, minimum is ${item.minQuantity.formatQuantity()}",
+                notificationBody = digestBody(items),
                 scheduledDateTime = reminderDate,
                 androidNotificationConfiguration = AndroidNotificationConfiguration(
                     priority = AndroidNotificationPriority.DEFAULT,
@@ -31,7 +31,20 @@ class AlarmeeLowStockNotifier(
         )
     }
 
-    override fun cancel(productId: String) {
-        alarmeeService.local.cancel(uuid = productId)
+    override fun cancel() {
+        alarmeeService.local.cancel(uuid = DIGEST_UUID)
+    }
+
+    private fun digestBody(items: List<LowStockItem>): String {
+        val listed = items.take(MAX_LISTED_ITEMS).joinToString(separator = ", ") { item ->
+            "${item.productName} (${item.stock.formatQuantity()}/${item.minQuantity.formatQuantity()} ${item.unit})"
+        }
+        val hidden = items.size - MAX_LISTED_ITEMS
+        return if (hidden > 0) "$listed and $hidden more" else listed
+    }
+
+    private companion object {
+        const val DIGEST_UUID = "low-stock-digest"
+        const val MAX_LISTED_ITEMS = 4
     }
 }

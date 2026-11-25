@@ -8,21 +8,9 @@ class RescheduleLowStockRemindersUseCase(
 ) {
 
     operator fun invoke(items: List<LowStockItem>, now: LocalDateTime) {
-        items
-            .filterNot { it.needsRestock }
-            .forEach { item -> notifier.cancel(item.productId) }
+        notifier.cancel()
+        if (items.isEmpty()) return
 
-        items
-            .filter { it.needsRestock }
-            .sortedBy { it.productName }
-            .take(MAX_SCHEDULED)
-            .forEach { item ->
-                notifier.cancel(item.productId)
-                notifier.schedule(item, LowStockRules.reminderDate(now))
-            }
-    }
-
-    private companion object {
-        const val MAX_SCHEDULED = 64
+        notifier.schedule(items, LowStockRules.reminderDate(now))
     }
 }

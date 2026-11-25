@@ -4,10 +4,15 @@ import androidx.room3.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.example.krations.AuthViewModel
 import com.example.krations.alerts.data.AlarmeeExpirationNotifier
+import com.example.krations.alerts.data.AlarmeeLowStockNotifier
 import com.example.krations.alerts.data.FakeExpiringItemsRepository
+import com.example.krations.alerts.data.ProductLowStockItemsRepository
 import com.example.krations.alerts.domain.ExpirationNotifier
 import com.example.krations.alerts.domain.ExpiringItemsRepository
+import com.example.krations.alerts.domain.LowStockItemsRepository
+import com.example.krations.alerts.domain.LowStockNotifier
 import com.example.krations.alerts.domain.RescheduleExpirationRemindersUseCase
+import com.example.krations.alerts.domain.RescheduleLowStockRemindersUseCase
 import com.example.krations.core.config.BuildKonfig
 import com.example.krations.core.database.AppDatabase
 import com.example.krations.inventory.ui.InventoryViewModel
@@ -64,6 +69,9 @@ val alertsModule = module {
     single<ExpiringItemsRepository> { FakeExpiringItemsRepository() }
     single<ExpirationNotifier> { AlarmeeExpirationNotifier(get()) }
     factoryOf(::RescheduleExpirationRemindersUseCase)
+    single<LowStockItemsRepository> { ProductLowStockItemsRepository(get()) }
+    single<LowStockNotifier> { AlarmeeLowStockNotifier(get()) }
+    factoryOf(::RescheduleLowStockRemindersUseCase)
 }
 
 // Platform specific dependencies

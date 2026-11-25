@@ -5,7 +5,7 @@ import kotlinx.datetime.LocalDateTime
 
 interface LowStockNotifier {
 
-    fun schedule(item: LowStockItem, reminderDate: LocalDateTime)
+    fun schedule(items: List<LowStockItem>, reminderDate: LocalDateTime)
 
-    fun cancel(productId: String)
+    fun cancel()
 }

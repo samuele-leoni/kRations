@@ -7,7 +7,7 @@ import com.example.krations.inventory.domain.model.stockStatus
 import com.example.krations.shoppinglist.domain.model.ShoppingListItem
 import kotlinx.coroutines.flow.combine
 
-class AddLowStockItemsUseCase(
+class AddNeedsRestockItemsUseCase(
     private val productRepository: ProductRepository,
     private val shoppingListRepository: ShoppingListRepository,
 ) {
