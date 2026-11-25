@@ -1,8 +1,8 @@
 package com.example.krations.core.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.example.krations.inventory.ui.InventoryScreen
@@ -12,10 +12,12 @@ import com.example.krations.inventory.ui.product.ProductEditScreen
 import com.example.krations.shoppinglist.ui.ShoppingListScreen
 
 @Composable
-fun AppNavigation() {
-    val backStack = remember { mutableStateListOf<AppRoute>(AppRoute.Inventory) }
-
+fun AppNavigation(
+    backStack: SnapshotStateList<AppRoute>,
+    modifier: Modifier = Modifier,
+) {
     NavDisplay(
+        modifier = modifier,
         backStack = backStack,
         onBack = { backStack.removeLastOrNull() },
         entryProvider = { key ->
@@ -48,7 +50,9 @@ fun AppNavigation() {
                     CategoryListScreen(
                         onBack = { backStack.removeLastOrNull() },
                         onNewCategory = { backStack.add(AppRoute.NewCategory) },
-                        onEditCategory = { categoryId -> backStack.add(AppRoute.EditCategory(categoryId)) },
+                        onEditCategory = { categoryId ->
+                            backStack.add(AppRoute.EditCategory(categoryId))
+                        },
                     )
                 }
 
