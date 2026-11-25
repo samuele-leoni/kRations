@@ -17,8 +17,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.composables.icons.materialicons.MaterialIcons
-import com.composables.icons.materialicons.rounded.Calendar_today
+import com.composables.icons.materialsymbols.MaterialSymbols
+import com.composables.icons.materialsymbols.rounded.Calendar_today
 import com.example.krations.core.ui.utils.formatQuantity
 import com.example.krations.shoppinglist.domain.model.ShoppingListItem
 import kotlinx.datetime.LocalDate
@@ -53,7 +53,7 @@ fun ShoppingListItemPurchase(
             trailingIcon = {
                 IconButton(onClick = { showDatePicker = true }) {
                     Icon(
-                        MaterialIcons.Rounded.Calendar_today,
+                        MaterialSymbols.Rounded.Calendar_today,
                         contentDescription = "Choose expiration date"
                     )
                 }

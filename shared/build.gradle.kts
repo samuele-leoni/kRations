@@ -91,13 +91,23 @@ kotlin {
             implementation(libs.supabase.postgrest)
 
             // Icons
-            implementation(libs.icons.material.icons.rounded.cmp)
+            implementation(libs.icons.material.symbols.rounded.cmp)
+
+            // Navigation
+            implementation(libs.jetbrains.navigation3.ui)
 
             // DateTime
             implementation(libs.kotlinx.datetime)
 
             // Logging
             implementation(libs.kermit)
+
+            // Notifications
+            implementation(libs.alarmee)
+
+            // Permissions
+            implementation(libs.calf.permissions.core)
+            implementation(libs.calf.permissions.notifications)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

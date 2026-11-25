@@ -21,8 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.composables.icons.materialicons.MaterialIcons
-import com.composables.icons.materialicons.rounded.Add
+import com.composables.icons.materialsymbols.MaterialSymbols
+import com.composables.icons.materialsymbols.rounded.Add
 import com.example.krations.shoppinglist.domain.model.ShoppingListItem
 import com.example.krations.shoppinglist.ui.components.ShoppingListContentItem
 import com.example.krations.shoppinglist.ui.state.ShoppingListTab
@@ -115,7 +115,7 @@ fun ShoppingListContent(
                         modifier = Modifier.align(Alignment.CenterVertically),
                     ) {
                         Icon(
-                            MaterialIcons.Rounded.Add,
+                            MaterialSymbols.Rounded.Add,
                             contentDescription = "Add new item to the list",
                         )
                     }

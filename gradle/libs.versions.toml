@@ -11,11 +11,12 @@ androidx-lifecycle = "2.11.0"
 androidx-testExt = "1.3.0"
 androidx-testRunner = "1.7.0"
 composeMultiplatform = "1.12.2"
-iconsMaterialIconsRoundedCmp = "2.2.1"
+iconsMaterialSymbolsRoundedCmp = "2.2.1"
 junit = "4.13.2"
 kotlin = "2.4.21"
 kotlin-wrappers = "2026.11.2"
 material3 = "1.12.0-alpha03"
+navigation3 = "1.2.0"
 room3 = "3.0.3"
 sqlite = "2.7.1"
 ksp = "2.3.11"
@@ -25,6 +26,8 @@ ktor = "3.6.1"
 kotlinx-datetime = "0.8.0"
 kermit = "2.2.0"
 buildKonfig = "0.23.0"
+alarmee = "2.7.2"
+calf = "0.14.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -43,7 +46,7 @@ compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.re
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "composeMultiplatform" }
 compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
-icons-material-icons-rounded-cmp = { module = "com.composables:icons-material-icons-rounded-cmp", version.ref = "iconsMaterialIconsRoundedCmp" }
+icons-material-symbols-rounded-cmp = { module = "com.composables:icons-material-symbols-rounded-cmp", version.ref = "iconsMaterialSymbolsRoundedCmp" }
 compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "composeMultiplatform" }
 wrappers-browser = { module = "org.jetbrains.kotlin-wrappers:kotlin-browser", version.ref = "kotlin-wrappers" }
@@ -53,6 +56,7 @@ androidx-room3-compiler = { module = "androidx.room3:room3-compiler", version.re
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+jetbrains-navigation3-ui = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 
 # Supabase
 supabase-auth = { module = "io.github.jan-tennert.supabase:auth-kt", version.ref = "supabase" }
@@ -64,6 +68,14 @@ ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "kto
 
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+
+# Notifications
+alarmee = { group = "io.github.tweener", name = "alarmee", version.ref = "alarmee" }        # For local notifications only
+# alarmee = { group = "io.github.tweener", name = "alarmee-push", version.ref = "alarmee" }   # For both local & push notifications
+
+# Permissions
+calf-permissions-core = { module = "com.mohamedrejeb.calf:calf-permissions-core", version.ref = "calf" }
+calf-permissions-notifications = { module = "com.mohamedrejeb.calf:calf-permissions-notifications", version.ref = "calf" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
