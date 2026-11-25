@@ -56,6 +56,8 @@ import com.composables.icons.materialsymbols.rounded.Arrow_back
 import com.composables.icons.materialsymbols.rounded.Arrow_drop_down
 import com.composables.icons.materialsymbols.rounded.Delete
 import com.composables.icons.materialsymbols.rounded.Remove
+import com.example.krations.core.ui.utils.formatQuantity
+import com.example.krations.core.ui.utils.toTwoDecimals
 import com.example.krations.inventory.domain.model.Category
 import com.example.krations.inventory.ui.common.EditField
 import com.example.krations.inventory.ui.common.EditHeader
@@ -249,13 +251,13 @@ private fun MinimumStockField(
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f),
             )
-            Pill(modifier = Modifier.width(56.dp)) {
-                Text(text = value.toInt().toString(), style = MaterialTheme.typography.bodyLarge)
+            Pill(modifier = Modifier.width(72.dp)) {
+                Text(text = value.formatQuantity(), style = MaterialTheme.typography.bodyLarge)
             }
         }
         Slider(
             value = value.toFloat().coerceIn(0f, MAX_MIN_QUANTITY),
-            onValueChange = { onValueChange(it.toDouble()) },
+            onValueChange = { onValueChange(it.toDouble().toTwoDecimals()) },
             valueRange = 0f..MAX_MIN_QUANTITY,
             modifier = Modifier.fillMaxWidth(),
             colors = SliderDefaults.colors(

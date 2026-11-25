@@ -43,6 +43,8 @@ import com.composables.icons.materialsymbols.rounded.Close
 import com.composables.icons.materialsymbols.rounded.Inventory_2
 import com.composables.icons.materialsymbols.rounded.Search
 import com.example.krations.inventory.domain.model.Category
+import com.example.krations.inventory.domain.model.StockStatus
+import com.example.krations.inventory.domain.model.stockStatus
 import com.example.krations.inventory.domain.model.Product
 import com.example.krations.inventory.ui.common.inventoryIcon
 import com.example.krations.inventory.ui.state.InventoryUiState
@@ -264,18 +266,6 @@ private fun AddProductButton(onClick: () -> Unit, modifier: Modifier = Modifier)
     ) {
         Icon(MaterialSymbols.Rounded.Add, contentDescription = "Add product")
     }
-}
-
-private enum class StockStatus(val label: String) {
-    InStock("In Stock"),
-    LowStock("Low\nStock"),
-    OutOfStock("Out of\nStock"),
-}
-
-private fun Product.stockStatus(): StockStatus = when {
-    stock <= 0.0 -> StockStatus.OutOfStock
-    stock < minQuantity -> StockStatus.LowStock
-    else -> StockStatus.InStock
 }
 
 @Preview(showBackground = true)

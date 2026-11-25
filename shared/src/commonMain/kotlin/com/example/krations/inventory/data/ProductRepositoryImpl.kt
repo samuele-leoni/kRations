@@ -27,6 +27,9 @@ class ProductRepositoryImpl(
             .map { rows -> rows.map(ProductWithStock::toProduct) }
     }
 
+    override fun observeAllProducts(): Flow<List<Product>> =
+        observeProducts(query = "", categoryIds = emptySet(), includeUncategorized = false)
+
     override suspend fun getProduct(id: String): Product? =
         productDao.getProductById(id, LOCAL_USER_ID)?.toProduct()
 

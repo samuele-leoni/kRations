@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import androidx.room3.Room
 import androidx.room3.RoomDatabase
 import com.example.krations.alerts.domain.EXPIRATION_CHANNEL_ID
+import com.example.krations.alerts.domain.LOW_STOCK_CHANNEL_ID
 import com.example.krations.core.database.AppDatabase
 import com.tweener.alarmee.channel.AlarmeeNotificationChannel
 import com.tweener.alarmee.configuration.AlarmeeAndroidPlatformConfiguration
@@ -29,6 +30,11 @@ actual val platformModule: Module = module {
                 AlarmeeNotificationChannel(
                     id = EXPIRATION_CHANNEL_ID,
                     name = "Expiration reminders",
+                    importance = NotificationManager.IMPORTANCE_DEFAULT,
+                ),
+                AlarmeeNotificationChannel(
+                    id = LOW_STOCK_CHANNEL_ID,
+                    name = "Low stock reminders",
                     importance = NotificationManager.IMPORTANCE_DEFAULT,
                 ),
             ),
