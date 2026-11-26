@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -41,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.materialsymbols.MaterialSymbols
 import com.composables.icons.materialsymbols.rounded.Check
 import com.composables.icons.materialsymbols.rounded.Search
+import com.example.krations.core.navigation.ui.DetailScaffold
 import com.example.krations.inventory.ui.common.EditField
 import com.example.krations.inventory.ui.common.EditHeader
 import com.example.krations.inventory.ui.common.EditablePillValue
@@ -66,13 +65,9 @@ fun CategoryEditContent(
     var showDeleteDialog by remember { mutableStateOf(false) }
     var showIconPicker by remember { mutableStateOf(false) }
 
-    Box(modifier = modifier.fillMaxSize().safeContentPadding().imePadding()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 24.dp),
-        ) {
+    DetailScaffold(
+        modifier = modifier,
+        header = {
             EditHeader(
                 title = if (uiState.isCreate) "New category" else "Edit category",
                 canDelete = !uiState.isCreate && !uiState.isLoading,
@@ -80,6 +75,14 @@ fun CategoryEditContent(
                 onDelete = { showDeleteDialog = true },
                 deleteContentDescription = "Delete category",
             )
+        },
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 24.dp),
+        ) {
 
             uiState.deleteBlockedCount?.let { count ->
                 NoticeBanner(

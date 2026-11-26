@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFromBaseline
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -44,7 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -59,6 +56,7 @@ import com.composables.icons.materialsymbols.rounded.Remove
 import com.example.krations.core.ui.utils.formatQuantity
 import com.example.krations.core.ui.utils.toTwoDecimals
 import com.example.krations.inventory.domain.model.Category
+import com.example.krations.core.navigation.ui.DetailScaffold
 import com.example.krations.inventory.ui.common.EditField
 import com.example.krations.inventory.ui.common.EditHeader
 import com.example.krations.inventory.ui.common.EditablePillValue
@@ -95,19 +93,23 @@ fun ProductEditContent(
     var openedPicker by remember { mutableStateOf<String?>(null) }
     var batchBeingDated by remember { mutableStateOf<Int?>(null) }
 
-    Box(modifier = modifier.fillMaxSize().safeContentPadding().imePadding()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(bottom = 24.dp),
-        ) {
+    DetailScaffold(
+        modifier = modifier,
+        header = {
             EditHeader(
                 title = if (uiState.isCreate) "Create product" else "Edit product",
                 canDelete = !uiState.isCreate && !uiState.isLoading,
                 onBack = onBack,
                 onDelete = { showDeleteDialog = true },
             )
+        },
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 24.dp),
+        ) {
 
             EditField(label = "Name") {
                 Pill(modifier = Modifier.fillMaxWidth()) {
@@ -458,5 +460,4 @@ private const val MILLIS_PER_DAY = 86_400_000L
 private const val CATEGORY_PICKER = "category"
 private const val UNIT_PICKER = "unit"
 
-// Not a category id: it is the row that leaves the picker and opens the editor instead.
 private const val NEW_CATEGORY = "new-category"
