@@ -40,7 +40,6 @@ fun AuthRoute() {
             onClearFeedback = authViewModel::clearFeedback,
         )
         else -> HomeScreen(
-            email = authState.email,
             onProfileClick = {
                 if (authState.authenticated) showAccount = true else showAuth = true
             },

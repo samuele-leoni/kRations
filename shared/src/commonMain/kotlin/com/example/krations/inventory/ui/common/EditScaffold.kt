@@ -20,8 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.krations.core.navigation.ui.AppHeader
 import com.composables.icons.materialsymbols.MaterialSymbols
 import com.composables.icons.materialsymbols.rounded.Arrow_back
 import com.composables.icons.materialsymbols.rounded.Arrow_drop_down
@@ -35,27 +35,23 @@ fun EditHeader(
     onDelete: () -> Unit = {},
     deleteContentDescription: String = "Delete",
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        IconButton(onClick = onBack) {
-            Icon(MaterialSymbols.Rounded.Arrow_back, contentDescription = "Back")
-        }
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-        )
-        if (canDelete) {
-            IconButton(onClick = onDelete) {
-                Icon(MaterialSymbols.Rounded.Delete, contentDescription = deleteContentDescription)
+    AppHeader(
+        title = title,
+        navigationIcon = {
+            IconButton(onClick = onBack) {
+                Icon(MaterialSymbols.Rounded.Arrow_back, contentDescription = "Back")
             }
-        } else {
-            Box(modifier = Modifier.size(48.dp))
-        }
-    }
+        },
+        actions = {
+            if (canDelete) {
+                IconButton(onClick = onDelete) {
+                    Icon(MaterialSymbols.Rounded.Delete, contentDescription = deleteContentDescription)
+                }
+            } else {
+                Box(modifier = Modifier.size(48.dp))
+            }
+        },
+    )
 }
 
 @Composable
