@@ -2,15 +2,12 @@ package com.example.krations.inventory.ui.category
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -37,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.composables.icons.materialsymbols.MaterialSymbols
 import com.composables.icons.materialsymbols.rounded.Add
 import com.composables.icons.materialsymbols.rounded.Delete
+import com.example.krations.core.navigation.ui.DetailScaffold
 import com.example.krations.inventory.domain.model.Category
 import com.example.krations.inventory.domain.model.CategorySummary
 import com.example.krations.inventory.ui.common.EditHeader
@@ -63,26 +61,27 @@ fun CategoryListContent(
 ) {
     var categoryToDelete by remember { mutableStateOf<CategorySummary?>(null) }
 
-    Box(modifier = modifier.fillMaxSize().safeContentPadding().imePadding()) {
+    DetailScaffold(
+        modifier = modifier,
+        header = { EditHeader(title = "Categories", canDelete = false, onBack = onBack) },
+    ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            EditHeader(title = "Categories", canDelete = false, onBack = onBack)
+                uiState.notice?.let { message ->
+                    NoticeBanner(message = message, onDismiss = onNoticeDismissed)
+                }
 
-            uiState.notice?.let { message ->
-                NoticeBanner(message = message, onDismiss = onNoticeDismissed)
-            }
-
-            if (uiState.categories.isEmpty()) {
-                Text(
-                    text = "No categories yet. Create one to keep related products together.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(16.dp),
-                )
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(bottom = 88.dp),
-                ) {
+                if (uiState.categories.isEmpty()) {
+                    Text(
+                        text = "No categories yet. Create one to keep related products together.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(16.dp),
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(bottom = 88.dp),
+                    ) {
                     items(uiState.categories, key = { summary -> summary.category.id }) { summary ->
                         CategoryCard(
                             summary = summary,
