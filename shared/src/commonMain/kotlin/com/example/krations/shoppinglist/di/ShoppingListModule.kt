@@ -1,5 +1,6 @@
 package com.example.krations.shoppinglist.di
 
+import com.example.krations.alerts.domain.AddExpiringItemsToShoppingListUseCase
 import com.example.krations.shoppinglist.data.ShoppingListRepositoryImpl
 import com.example.krations.shoppinglist.domain.AddNeedsRestockItemsUseCase
 import com.example.krations.shoppinglist.domain.SetItemPurchasedUseCase
@@ -14,4 +15,5 @@ val shoppingListModule = module {
     viewModelOf(::ShoppingListViewModel)
     factoryOf(::SetItemPurchasedUseCase)
     factoryOf(::AddNeedsRestockItemsUseCase)
+    factoryOf(::AddExpiringItemsToShoppingListUseCase)
 }

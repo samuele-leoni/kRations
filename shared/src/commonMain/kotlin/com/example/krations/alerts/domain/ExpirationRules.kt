@@ -17,6 +17,9 @@ object ExpirationRules {
     fun isExpiringSoon(expiration: LocalDate, today: LocalDate, expiryAlertDays: Int): Boolean =
         expiration >= today && expiration <= today.plus(expiryAlertDays, DateTimeUnit.DAY)
 
+    fun needsReplacement(expiration: LocalDate, today: LocalDate, expiryAlertDays: Int): Boolean =
+        expiration <= today.plus(expiryAlertDays, DateTimeUnit.DAY)
+
     fun reminderDate(expiration: LocalDate, now: LocalDateTime, expiryAlertDays: Int): LocalDateTime? =
         if (expiration < now.date) null
         else reminderDate(expiration, expiryAlertDays).takeIf { it > now }

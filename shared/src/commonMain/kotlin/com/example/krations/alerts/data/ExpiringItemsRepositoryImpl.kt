@@ -34,6 +34,9 @@ class ExpiringItemsRepositoryImpl(
                                                 batchId = batch.id,
                                                 expirationDate = LocalDate.parse(date),
                                                 expiryAlertDays = product.expiryAlertDays,
+                                                productId = product.id,
+                                                unit = product.unit,
+                                                quantity = batch.quantity,
                                             )
                                         }
                                     }
