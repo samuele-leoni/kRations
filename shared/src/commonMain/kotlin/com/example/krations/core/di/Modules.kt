@@ -5,7 +5,7 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.example.krations.AuthViewModel
 import com.example.krations.alerts.data.AlarmeeExpirationNotifier
 import com.example.krations.alerts.data.AlarmeeLowStockNotifier
-import com.example.krations.alerts.data.FakeExpiringItemsRepository
+import com.example.krations.alerts.data.ExpiringItemsRepositoryImpl
 import com.example.krations.alerts.data.ProductLowStockItemsRepository
 import com.example.krations.alerts.domain.ExpirationNotifier
 import com.example.krations.alerts.domain.ExpiringItemsRepository
@@ -66,7 +66,7 @@ val viewModelModule = module {
 
 val alertsModule = module {
     single { createAlarmeeService().apply { initialize(get()) } }
-    single<ExpiringItemsRepository> { FakeExpiringItemsRepository() }
+    single<ExpiringItemsRepository> { ExpiringItemsRepositoryImpl(get(), get()) }
     single<ExpirationNotifier> { AlarmeeExpirationNotifier(get()) }
     factoryOf(::RescheduleExpirationRemindersUseCase)
     single<LowStockItemsRepository> { ProductLowStockItemsRepository(get()) }

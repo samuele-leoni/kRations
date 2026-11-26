@@ -10,10 +10,17 @@ class SetItemPurchasedUseCase(
     private val inventoryBatchRepository: InventoryBatchRepository,
 ) {
     suspend operator fun invoke(item: ShoppingListItem, quantity: Double, expirationDate: String?) {
-        Logger.withTag("SetItemPurchased").d { "${item.name}: productId=${item.productId}, qty=$quantity, exp=$expirationDate" }
-        item.productId?.let { inventoryBatchRepository.addQuantity(it, quantity, expirationDate) }
+        Logger.withTag("SetItemPurchased")
+            .d { "${item.name}: productId=${item.productId}, qty=$quantity, exp=$expirationDate" }
+        item.productId
+            ?.let { inventoryBatchRepository.addQuantity(it, quantity, expirationDate) }
+            ?: inventoryBatchRepository.addQuantity(item.name, item.unit, quantity, expirationDate)
         shoppingListRepository.updateItem(
-            item.copy(isPurchased = true, purchasedQuantity = quantity, purchasedAt = now().toString())
+            item.copy(
+                isPurchased = true,
+                purchasedQuantity = quantity,
+                purchasedAt = now().toString()
+            )
         )
     }
 }
