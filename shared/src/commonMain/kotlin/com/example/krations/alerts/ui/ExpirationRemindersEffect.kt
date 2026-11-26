@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.compose.koinInject
+import kotlin.math.exp
 import kotlin.time.Clock.System.now
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -27,10 +28,15 @@ fun ExpirationRemindersEffect() {
             notificationPermission.launchPermissionRequest()
         }
 
-        val currentDateTime = now().toLocalDateTime(TimeZone.currentSystemDefault())
-        rescheduleExpirationReminders(
-            expiringItemsRepository.observeItems().first(),
-            currentDateTime,
-        )
+        var previousBatchIds = emptySet<String>()
+        expiringItemsRepository.observeItems().collect { items ->
+            val currentBatchIds = items.map { it.batchId }.toSet()
+            rescheduleExpirationReminders(
+                items,
+                now().toLocalDateTime(TimeZone.currentSystemDefault()),
+                removedBatchIds = previousBatchIds - currentBatchIds,
+            )
+            previousBatchIds = currentBatchIds
+        }
     }
 }

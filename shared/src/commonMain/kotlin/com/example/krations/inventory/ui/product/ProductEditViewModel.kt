@@ -28,6 +28,7 @@ class ProductEditViewModel(
 
     private var loadedProduct: Product? = null
     private var storedQuantities: Map<String, Double> = emptyMap()
+    private var storedExpirationDates: Map<String, String?> = emptyMap()
 
     private val backEvents = Channel<Unit>(Channel.CONFLATED)
 
@@ -53,11 +54,13 @@ class ProductEditViewModel(
         // before instead of the one the user is looking at now.
         loadedProduct = null
         storedQuantities = emptyMap()
+        storedExpirationDates = emptyMap()
         draft.value = ProductEditUiState(isCreate = productId == null, isLoading = true)
 
         viewModelScope.launch {
             val product = productId?.let { productRepository.getProduct(it) }
             val batches = productId?.let { batchRepository.observeBatches(it).first() }.orEmpty()
+            storedExpirationDates = batches.associate { it.id to it.expirationDate }
 
             loadedProduct = product
             storedQuantities = batches.associate { it.id to it.quantity }
@@ -169,6 +172,10 @@ class ProductEditViewModel(
 
         if (storedQuantities[storedId] != batch.quantity.toDouble()) {
             batchRepository.setQuantity(storedId, batch.quantity.toDouble())
+        }
+
+        if (storedExpirationDates[storedId] != batch.expirationDate) {
+            batchRepository.updateBatchExpirationDate(storedId, batch.expirationDate)
         }
     }
 

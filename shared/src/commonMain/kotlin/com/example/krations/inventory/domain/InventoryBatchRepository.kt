@@ -23,6 +23,8 @@ interface InventoryBatchRepository {
 
     suspend fun setQuantity(batchId: String, quantity: Double)
 
+    suspend fun updateBatchExpirationDate(batchId: String, expirationDate: String?)
+
     suspend fun deleteBatch(batchId: String)
 }
 

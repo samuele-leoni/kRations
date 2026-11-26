@@ -91,6 +91,12 @@ class InventoryBatchRepositoryImpl(
         batchDao.updateBatch(existing.copy(quantity = quantity, updatedAt = now().toString()))
     }
 
+    override suspend fun updateBatchExpirationDate(batchId: String, expirationDate: String?) {
+        batchDao.getBatchById(batchId, LOCAL_USER_ID)?.let { existing ->
+            batchDao.updateBatch(existing.copy(expirationDate = expirationDate, updatedAt = now().toString()))
+        }
+    }
+
     override suspend fun deleteBatch(batchId: String) = now().toString().let { timestamp ->
         batchDao.deleteBatch(
             deletedAt = timestamp,

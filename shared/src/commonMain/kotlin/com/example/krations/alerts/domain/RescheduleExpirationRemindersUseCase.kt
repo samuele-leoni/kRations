@@ -6,16 +6,22 @@ import kotlinx.datetime.LocalDateTime
 class RescheduleExpirationRemindersUseCase(
     private val notifier: ExpirationNotifier,
 ) {
-    operator fun invoke(items: List<ExpiringItem>, now: LocalDateTime) {
+    operator fun invoke(
+        items: List<ExpiringItem>,
+        now: LocalDateTime,
+        removedBatchIds: Set<String> = emptySet(),
+    ) {
+        removedBatchIds.forEach { notifier.cancel(it) }
+        items.forEach { notifier.cancel(it.batchId) }
+
         items
             .mapNotNull { item ->
-                ExpirationRules.reminderDate(item.expirationDate, now)
+                ExpirationRules.reminderDate(item.expirationDate, now, item.expiryAlertDays)
                     ?.let { expirationReminderDate -> item to expirationReminderDate }
             }
             .sortedBy { (_, expirationReminderDate) -> expirationReminderDate }
             .take(MAX_SCHEDULED)
             .forEach { (item, expirationReminderDate) ->
-                notifier.cancel(item.batchId)
                 notifier.schedule(item, expirationReminderDate)
             }
     }
