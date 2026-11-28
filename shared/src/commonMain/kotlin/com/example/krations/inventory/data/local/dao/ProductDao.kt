@@ -3,6 +3,7 @@ package com.example.krations.inventory.data.local.dao
 import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.Query
+import androidx.room3.Upsert
 import androidx.room3.Update
 import com.example.krations.inventory.data.local.entity.ProductEntity
 import com.example.krations.inventory.data.local.entity.ProductWithStock
@@ -51,6 +52,12 @@ interface ProductDao {
             "ORDER BY createdAt ASC LIMIT 1",
     )
     suspend fun getProductByName(name: String, ownerUserId: String): ProductEntity?
+
+    @Query("SELECT * FROM ProductEntity WHERE ownerUserId = :ownerUserId")
+    suspend fun getRowsForSync(ownerUserId: String): List<ProductEntity>
+
+    @Upsert
+    suspend fun upsertRowsForSync(rows: List<ProductEntity>)
 
     @Insert
     suspend fun insertProduct(product: ProductEntity)

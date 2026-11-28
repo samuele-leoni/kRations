@@ -1,6 +1,6 @@
 package com.example.krations.inventory.data
 
-import com.example.krations.core.data.LOCAL_USER_ID
+import com.example.krations.core.data.CurrentUserProvider
 import com.example.krations.inventory.data.local.dao.InventoryBatchDao
 import com.example.krations.inventory.data.local.dao.ProductDao
 import com.example.krations.inventory.data.local.entity.InventoryBatchEntity
@@ -10,18 +10,24 @@ import com.example.krations.inventory.domain.InventoryBatchRepository
 import com.example.krations.inventory.domain.model.InventoryBatch
 import kotlin.time.Clock.System.now
 import kotlin.uuid.Uuid
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class InventoryBatchRepositoryImpl(
     private val batchDao: InventoryBatchDao,
     private val productDao: ProductDao,
+    private val currentUserProvider: CurrentUserProvider,
 ) : InventoryBatchRepository {
 
     override fun observeBatches(productId: String): Flow<List<InventoryBatch>> =
-        batchDao
-            .getBatchesForProduct(productId, LOCAL_USER_ID)
-            .map { rows -> rows.map(InventoryBatchEntity::toBatch) }
+        currentUserProvider.userId.flatMapLatest { userId ->
+            batchDao.getBatchesForProduct(productId, userId).map { rows ->
+                rows.map(InventoryBatchEntity::toBatch)
+            }
+        }
 
     override suspend fun addQuantity(
         productId: String,
@@ -29,13 +35,13 @@ class InventoryBatchRepositoryImpl(
         expirationDate: String?,
     ): AddQuantityResult {
         require(quantity > 0.0) { "addQuantity needs a positive quantity, got $quantity" }
-
-        if (productDao.getProductById(productId, LOCAL_USER_ID) == null) {
+        val userId = currentUserProvider.userId.value
+        if (productDao.getProductById(productId, userId) == null) {
             return AddQuantityResult.UnknownProduct(productId)
         }
 
         val timestamp = now().toString()
-        addToStock(productId, quantity, expirationDate, timestamp)
+        addToStock(productId, quantity, expirationDate, timestamp, userId)
         return AddQuantityResult.Added(productId)
     }
 
@@ -50,10 +56,11 @@ class InventoryBatchRepositoryImpl(
         val name = productName.trim()
         require(name.isNotEmpty()) { "addQuantity needs a product name, got \"$productName\"" }
 
+        val userId = currentUserProvider.userId.value
         val timestamp = now().toString()
-        val existing = productDao.getProductByName(name, LOCAL_USER_ID)
+        val existing = productDao.getProductByName(name, userId)
         if (existing != null) {
-            addToStock(existing.id, quantity, expirationDate, timestamp)
+            addToStock(existing.id, quantity, expirationDate, timestamp, userId)
             return AddQuantityResult.Added(existing.id)
         }
 
@@ -61,38 +68,36 @@ class InventoryBatchRepositoryImpl(
         productDao.insertProduct(
             ProductEntity(
                 id = productId,
-                ownerUserId = LOCAL_USER_ID,
+                ownerUserId = userId,
                 categoryId = null,
                 name = name,
                 description = null,
                 iconName = null,
-                unit = productUnit.trim().ifEmpty { "unit" },
                 createdAt = timestamp,
                 updatedAt = timestamp,
                 deletedAt = null,
             ),
         )
-        addToStock(productId, quantity, expirationDate, timestamp)
+        addToStock(productId, quantity, expirationDate, timestamp, userId)
         return AddQuantityResult.Created(productId)
     }
 
     override suspend fun addBatch(productId: String, quantity: Double, expirationDate: String?) {
         require(quantity > 0.0) { "addBatch needs a positive quantity, got $quantity" }
+        val userId = currentUserProvider.userId.value
+        if (productDao.getProductById(productId, userId) == null) return
 
-        if (productDao.getProductById(productId, LOCAL_USER_ID) == null) return
-
-        insertBatch(productId, quantity, expirationDate, now().toString())
+        insertBatch(productId, quantity, expirationDate, now().toString(), userId)
     }
 
     override suspend fun setQuantity(batchId: String, quantity: Double) {
         require(quantity >= 0.0) { "setQuantity needs a quantity not lower than zero, got $quantity" }
-
-        val existing = batchDao.getBatchById(batchId, LOCAL_USER_ID) ?: return
+        val existing = batchDao.getBatchById(batchId, currentUserProvider.userId.value) ?: return
         batchDao.updateBatch(existing.copy(quantity = quantity, updatedAt = now().toString()))
     }
 
     override suspend fun updateBatchExpirationDate(batchId: String, expirationDate: String?) {
-        batchDao.getBatchById(batchId, LOCAL_USER_ID)?.let { existing ->
+        batchDao.getBatchById(batchId, currentUserProvider.userId.value)?.let { existing ->
             batchDao.updateBatch(existing.copy(expirationDate = expirationDate, updatedAt = now().toString()))
         }
     }
@@ -102,7 +107,7 @@ class InventoryBatchRepositoryImpl(
             deletedAt = timestamp,
             updatedAt = timestamp,
             id = batchId,
-            ownerUserId = LOCAL_USER_ID,
+            ownerUserId = currentUserProvider.userId.value,
         )
     }
 
@@ -111,15 +116,16 @@ class InventoryBatchRepositoryImpl(
         quantity: Double,
         expirationDate: String?,
         timestamp: String,
+        userId: String,
     ) {
         val incremented = batchDao.addToBatchQuantity(
             delta = quantity,
             updatedAt = timestamp,
             productId = productId,
-            ownerUserId = LOCAL_USER_ID,
+            ownerUserId = userId,
             expirationDate = expirationDate,
         )
-        if (incremented == 0) insertBatch(productId, quantity, expirationDate, timestamp)
+        if (incremented == 0) insertBatch(productId, quantity, expirationDate, timestamp, userId)
     }
 
     private suspend fun insertBatch(
@@ -127,11 +133,12 @@ class InventoryBatchRepositoryImpl(
         quantity: Double,
         expirationDate: String?,
         timestamp: String,
+        userId: String,
     ) {
         batchDao.insertBatch(
             InventoryBatchEntity(
                 id = Uuid.random().toString(),
-                ownerUserId = LOCAL_USER_ID,
+                ownerUserId = userId,
                 productId = productId,
                 quantity = quantity,
                 expirationDate = expirationDate,

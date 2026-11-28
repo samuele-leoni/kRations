@@ -14,6 +14,9 @@ import com.example.krations.alerts.domain.LowStockNotifier
 import com.example.krations.alerts.domain.RescheduleExpirationRemindersUseCase
 import com.example.krations.alerts.domain.RescheduleLowStockRemindersUseCase
 import com.example.krations.core.config.BuildKonfig
+import com.example.krations.core.data.CurrentUserProvider
+import com.example.krations.core.data.SupabaseSyncEngine
+import com.example.krations.core.database.LocalDataOwnershipMigrator
 import com.example.krations.core.database.AppDatabase
 import com.example.krations.inventory.ui.InventoryViewModel
 import com.example.krations.inventory.ui.category.CategoryEditViewModel
@@ -25,6 +28,7 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlin.time.Duration.Companion.seconds
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModel
@@ -37,6 +41,7 @@ val dataModule = module {
             supabaseUrl = BuildKonfig.SUPABASE_URL,
             supabaseKey = BuildKonfig.SUPABASE_PUBLISHABLE_KEY,
         ) {
+            requestTimeout = 10.seconds
             install(Auth) {
                 scheme = "com.example.krations"
                 host = "auth"
@@ -54,6 +59,10 @@ val dataModule = module {
     single { get<AppDatabase>().productDao() }
     single { get<AppDatabase>().categoryDao() }
     single { get<AppDatabase>().inventoryBatchDao() }
+    single { get<AppDatabase>().localDataOwnershipDao() }
+    single { CurrentUserProvider() }
+    single { LocalDataOwnershipMigrator(get()) }
+    single { SupabaseSyncEngine(get(), get(), get(), get(), get()) }
 }
 
 val viewModelModule = module {
@@ -61,7 +70,7 @@ val viewModelModule = module {
     viewModelOf(::ProductEditViewModel)
     viewModelOf(::CategoryListViewModel)
     viewModelOf(::CategoryEditViewModel)
-    viewModel { AuthViewModel(get()) }
+    viewModel { AuthViewModel(get(), get(), get(), get()) }
 }
 
 val alertsModule = module {

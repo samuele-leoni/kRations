@@ -2,6 +2,7 @@ package com.example.krations.core.navigation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
@@ -16,6 +17,8 @@ import com.example.krations.shoppinglist.ui.ShoppingListScreen
 fun AppNavigation(
     state: AppNavigationState,
     onProfileClick: () -> Unit,
+    onSyncClick: () -> Unit,
+    isSyncing: State<Boolean>,
     modifier: Modifier = Modifier,
 ) {
     NavDisplay(
@@ -29,6 +32,8 @@ fun AppNavigation(
                         section = NavSection.Home,
                         onSelectSection = state::select,
                         onProfileClick = onProfileClick,
+                        onSyncClick = onSyncClick,
+                        isSyncing = isSyncing,
                         content = {},
                     )
                 }
@@ -38,6 +43,8 @@ fun AppNavigation(
                         section = NavSection.Inventory,
                         onSelectSection = state::select,
                         onProfileClick = onProfileClick,
+                        onSyncClick = onSyncClick,
+                        isSyncing = isSyncing,
                     ) {
                         InventoryScreen(
                             onAddProduct = { state.push(AppRoute.AddProduct) },
@@ -52,6 +59,8 @@ fun AppNavigation(
                         section = NavSection.ShoppingList,
                         onSelectSection = state::select,
                         onProfileClick = onProfileClick,
+                        onSyncClick = onSyncClick,
+                        isSyncing = isSyncing,
                     ) {
                         ShoppingListScreen(modifier = Modifier.fillMaxSize())
                     }

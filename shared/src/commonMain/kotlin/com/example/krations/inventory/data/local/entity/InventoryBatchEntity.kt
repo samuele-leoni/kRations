@@ -16,6 +16,7 @@ import androidx.room3.PrimaryKey
             parentColumns = ["id", "ownerUserId"],
             childColumns = ["productId", "ownerUserId"],
             onDelete = ForeignKey.RESTRICT,
+            onUpdate = ForeignKey.CASCADE,
         ),
     ],
 )

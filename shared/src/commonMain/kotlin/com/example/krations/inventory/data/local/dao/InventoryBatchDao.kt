@@ -3,6 +3,7 @@ package com.example.krations.inventory.data.local.dao
 import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.Query
+import androidx.room3.Upsert
 import androidx.room3.Update
 import com.example.krations.inventory.data.local.entity.InventoryBatchEntity
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +22,12 @@ interface InventoryBatchDao {
             "WHERE id = :id AND ownerUserId = :ownerUserId AND deletedAt IS NULL",
     )
     suspend fun getBatchById(id: String, ownerUserId: String): InventoryBatchEntity?
+
+    @Query("SELECT * FROM InventoryBatchEntity WHERE ownerUserId = :ownerUserId")
+    suspend fun getRowsForSync(ownerUserId: String): List<InventoryBatchEntity>
+
+    @Upsert
+    suspend fun upsertRowsForSync(rows: List<InventoryBatchEntity>)
 
     @Insert
     suspend fun insertBatch(batch: InventoryBatchEntity)

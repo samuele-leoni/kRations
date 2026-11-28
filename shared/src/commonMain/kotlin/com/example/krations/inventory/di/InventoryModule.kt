@@ -9,7 +9,7 @@ import com.example.krations.inventory.domain.ProductRepository
 import org.koin.dsl.module
 
 val inventoryModule = module {
-    single<ProductRepository> { ProductRepositoryImpl(get()) }
-    single<CategoryRepository> { CategoryRepositoryImpl(get()) }
-    single<InventoryBatchRepository> { InventoryBatchRepositoryImpl(get(), get()) }
+    single<ProductRepository> { ProductRepositoryImpl(get(), get()) }
+    single<CategoryRepository> { CategoryRepositoryImpl(get(), get()) }
+    single<InventoryBatchRepository> { InventoryBatchRepositoryImpl(get(), get(), get()) }
 }

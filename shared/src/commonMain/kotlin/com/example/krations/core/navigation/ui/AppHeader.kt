@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -50,11 +52,27 @@ fun AppHeader(
 }
 
 @Composable
-fun SyncAction(modifier: Modifier = Modifier) {
-    IconButton(onClick = {}, modifier = modifier) {
-        Icon(
-            imageVector = MaterialSymbols.Rounded.Sync,
-            contentDescription = "Sync",
-        )
+fun SyncAction(
+    onClick: () -> Unit,
+    isSyncing: State<Boolean>,
+    modifier: Modifier = Modifier,
+) {
+    val syncing = isSyncing.value
+    IconButton(
+        onClick = onClick,
+        enabled = !syncing,
+        modifier = modifier,
+    ) {
+        if (syncing) {
+            CircularProgressIndicator(
+                modifier = Modifier.padding(4.dp),
+                strokeWidth = 2.dp,
+            )
+        } else {
+            Icon(
+                imageVector = MaterialSymbols.Rounded.Sync,
+                contentDescription = "Sync",
+            )
+        }
     }
 }

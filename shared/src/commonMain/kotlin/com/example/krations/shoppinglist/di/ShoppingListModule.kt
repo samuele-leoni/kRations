@@ -11,7 +11,7 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val shoppingListModule = module {
-    single<ShoppingListRepository> { ShoppingListRepositoryImpl(get()) }
+    single<ShoppingListRepository> { ShoppingListRepositoryImpl(get(), get()) }
     viewModelOf(::ShoppingListViewModel)
     factoryOf(::SetItemPurchasedUseCase)
     factoryOf(::AddNeedsRestockItemsUseCase)

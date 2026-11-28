@@ -15,6 +15,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -26,6 +27,8 @@ fun SectionScaffold(
     section: NavSection,
     onSelectSection: (NavSection) -> Unit,
     onProfileClick: () -> Unit,
+    onSyncClick: () -> Unit,
+    isSyncing: State<Boolean>,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -50,7 +53,9 @@ fun SectionScaffold(
                             ProfileIcon(color = MaterialTheme.colorScheme.onSurface)
                         }
                     },
-                    actions = { SyncAction() },
+                    actions = {
+                        SyncAction(onClick = onSyncClick, isSyncing = isSyncing)
+                    },
                 )
             }
         },

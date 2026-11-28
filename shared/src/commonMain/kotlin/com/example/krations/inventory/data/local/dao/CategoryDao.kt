@@ -3,6 +3,7 @@ package com.example.krations.inventory.data.local.dao
 import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.Query
+import androidx.room3.Upsert
 import androidx.room3.Transaction
 import androidx.room3.Update
 import com.example.krations.inventory.data.local.entity.CategoryEntity
@@ -20,6 +21,12 @@ interface CategoryDao {
 
     @Query("SELECT * FROM CategoryEntity WHERE id = :id AND ownerUserId = :ownerUserId AND deletedAt IS NULL")
     suspend fun getCategoryById(id: String, ownerUserId: String): CategoryEntity?
+
+    @Query("SELECT * FROM CategoryEntity WHERE ownerUserId = :ownerUserId")
+    suspend fun getRowsForSync(ownerUserId: String): List<CategoryEntity>
+
+    @Upsert
+    suspend fun upsertRowsForSync(rows: List<CategoryEntity>)
 
     @Insert
     suspend fun insertCategory(category: CategoryEntity)

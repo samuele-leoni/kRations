@@ -1,6 +1,6 @@
 package com.example.krations.inventory.data
 
-import com.example.krations.core.data.LOCAL_USER_ID
+import com.example.krations.core.data.CurrentUserProvider
 import com.example.krations.inventory.data.local.dao.ProductDao
 import com.example.krations.inventory.data.local.entity.ProductEntity
 import com.example.krations.inventory.data.local.entity.ProductWithStock
@@ -8,11 +8,15 @@ import com.example.krations.inventory.domain.ProductRepository
 import com.example.krations.inventory.domain.model.Product
 import kotlin.time.Clock.System.now
 import kotlin.uuid.Uuid
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ProductRepositoryImpl(
     private val productDao: ProductDao,
+    private val currentUserProvider: CurrentUserProvider,
 ) : ProductRepository {
 
     override fun observeProducts(
@@ -22,16 +26,17 @@ class ProductRepositoryImpl(
     ): Flow<List<Product>> {
         val ids = categoryIds.toList().ifEmpty { listOf(NO_CATEGORY_SENTINEL) }
         val noCategoryFilter = categoryIds.isEmpty() && !includeUncategorized
-        return productDao
-            .searchProducts(query.trim(), ids, includeUncategorized, noCategoryFilter, LOCAL_USER_ID)
-            .map { rows -> rows.map(ProductWithStock::toProduct) }
+        return currentUserProvider.userId.flatMapLatest { userId ->
+            productDao.searchProducts(query.trim(), ids, includeUncategorized, noCategoryFilter, userId)
+                .map { rows -> rows.map(ProductWithStock::toProduct) }
+        }
     }
 
     override fun observeAllProducts(): Flow<List<Product>> =
         observeProducts(query = "", categoryIds = emptySet(), includeUncategorized = false)
 
     override suspend fun getProduct(id: String): Product? =
-        productDao.getProductById(id, LOCAL_USER_ID)?.toProduct()
+        productDao.getProductById(id, currentUserProvider.userId.value)?.toProduct()
 
     override suspend fun addProduct(
         name: String,
@@ -42,29 +47,29 @@ class ProductRepositoryImpl(
         expiryAlertDays: Int,
     ): String {
         val id = Uuid.random().toString()
-        now().toString().let { timestamp ->
-            productDao.insertProduct(
-                ProductEntity(
-                    id = id,
-                    ownerUserId = LOCAL_USER_ID,
-                    categoryId = categoryId,
-                    name = name,
-                    description = description,
-                    iconName = null,
-                    unit = unit,
-                    minQuantity = minQuantity,
-                    expiryAlertDays = expiryAlertDays,
-                    createdAt = timestamp,
-                    updatedAt = timestamp,
-                    deletedAt = null,
-                ),
-            )
-        }
+        val timestamp = now().toString()
+        productDao.insertProduct(
+            ProductEntity(
+                id = id,
+                ownerUserId = currentUserProvider.userId.value,
+                categoryId = categoryId,
+                name = name,
+                description = description,
+                iconName = null,
+                unit = unit,
+                minQuantity = minQuantity,
+                expiryAlertDays = expiryAlertDays,
+                createdAt = timestamp,
+                updatedAt = timestamp,
+                deletedAt = null,
+            ),
+        )
         return id
     }
 
     override suspend fun updateProduct(product: Product) {
-        val existing = productDao.getProductById(product.id, LOCAL_USER_ID)?.product ?: return
+        val userId = currentUserProvider.userId.value
+        val existing = productDao.getProductById(product.id, userId)?.product ?: return
         productDao.updateProduct(
             existing.copy(
                 categoryId = product.categoryId,
@@ -84,7 +89,7 @@ class ProductRepositoryImpl(
             deletedAt = timestamp,
             updatedAt = timestamp,
             id = id,
-            ownerUserId = LOCAL_USER_ID,
+            ownerUserId = currentUserProvider.userId.value,
         )
     }
 

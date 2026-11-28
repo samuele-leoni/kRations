@@ -4,6 +4,8 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,6 +32,10 @@ fun AuthRoute() {
         }
     }
 
+    LifecycleEventEffect(Lifecycle.Event.ON_START) {
+        if (authState.authenticated) authViewModel.synchronizeNow()
+    }
+
     when {
         authState.initializing -> LoadingScreen()
         showAuth && !authState.authenticated -> AuthScreen(
@@ -40,6 +46,8 @@ fun AuthRoute() {
             onClearFeedback = authViewModel::clearFeedback,
         )
         else -> HomeScreen(
+            isSyncing = authState.syncing,
+            onSyncClick = authViewModel::synchronizeNow,
             onProfileClick = {
                 if (authState.authenticated) showAccount = true else showAuth = true
             },
